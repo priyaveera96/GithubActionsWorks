@@ -1,6 +1,8 @@
 name: Mail test
 
 on: workflow_dispatch
+  schedule:
+    - cron: '*/5 * * * *'  # Run every 5 minutes
 jobs:
   send-email:
     runs-on: ubuntu-latest
