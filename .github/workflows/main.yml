@@ -1,6 +1,6 @@
 name: Mail test
 
-on: workflow_dispatch
+on: 
   schedule:
     - cron: '*/5 * * * *'  # Run every 5 minutes
 jobs:
