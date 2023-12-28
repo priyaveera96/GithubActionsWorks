@@ -1,7 +1,7 @@
 name: Mail test
 
-on: push
-
+on: 
+workflow_dispatch
 jobs:
   send-email:
     runs-on: ubuntu-latest
