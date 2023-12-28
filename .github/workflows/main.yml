@@ -1,8 +1,6 @@
 name: Mail test
 
-on:
-  schedule:
-    - cron: '0 0 * * *'  # Run daily at midnight
+on: push
 
 jobs:
   send-email:
@@ -11,10 +9,4 @@ jobs:
     steps:
       - name: Send email
         run: |
-          echo "Subject: Job Status - ${{ github.repository }}" > email.txt
-          echo "" >> email.txt
-          echo "The scheduled job ran on ${{ github.repository }}." >> email.txt
-          echo "Status: ${{ job.status }}" >> email.txt
-          # Add more details as needed
-          # Use a tool like mailx or another mail client to send the email
-          cat email.txt | mailx -s "Job Status - ${{ github.repository }}" user@example.com
+          echo "Subject: Job Status - "
