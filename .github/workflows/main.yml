@@ -40,5 +40,5 @@ jobs:
          run: | 
            echo " ====== Running ${{ inputs.env_value }}  TESTS ====== "
            echo "Test name :  ${{ inputs.suiteName }}"
-           echo "deviceName: {{matrix.deviceName}}"
-           echo "osVersion: {{matrix.osVersion}}"
+           echo "deviceName: ${{matrix.deviceName}}"
+           echo "osVersion: ${{matrix.osVersion}}"
