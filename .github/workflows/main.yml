@@ -95,7 +95,7 @@ jobs:
     steps:
       - name: Set matrix condition
         id: set-matrix-condition
-        run: echo "matrix-condition=${{ inputs.application_name == 'android' }}"
+        run: echo "matrix-condition=${{ inputs.application_name == 'android' }}" >> $GITHUB_ENV
 
   common-steps-and-after:
     needs: [iOS-TEST, android-TEST, check-matrix-condition]
