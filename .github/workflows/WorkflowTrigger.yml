@@ -1,0 +1,16 @@
+name: Trigger workflow
+on:
+  workflow_dispatch:
+
+jobs:
+
+  LoginTest:
+    uses: ./.github/workflows/main.yml
+    with:
+      application_name: vpp-api
+      environment: dev
+      test_environment: ${{ inputs.test_environment }}
+      PsuiteFile: EnrollmentsRegressionTest
+      application_project: enrollment
+      project_id: vpp-api-regression-test
+    secrets: inherit
