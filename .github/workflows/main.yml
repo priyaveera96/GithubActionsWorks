@@ -88,11 +88,22 @@ jobs:
            echo "Test name :  ${{ inputs.suiteName }}"
            echo "deviceName: ${{matrix.deviceName}}"
            echo "osVersion: ${{matrix.osVersion}}"
-  common-steps-and-after:
-    needs: [iOS-TEST, android-TEST]
-    runs-on: ubuntu-latest   
+  check-matrix-condition:
+    runs-on: ubuntu-latest
+    outputs:
+      matrix-condition: ${{ steps.set-matrix-condition.outputs.matrix-condition }}
     steps:
-       - name: common step       
+      - name: Set matrix condition
+        id: set-matrix-condition
+        run: echo "matrix-condition=${{ inputs.application_name == 'android' }}"
+
+  common-steps-and-after:
+    needs: [iOS-TEST, android-TEST, check-matrix-condition]
+    runs-on: ubuntu-latest   
+    if: ${{ needs.check-matrix-condition.outputs.matrix-condition == 'true' }}
+    
+    steps:
+       - name: common step to run     
          run: | 
            echo " ====== Running common step  TESTS ====== "
         
