@@ -1,13 +1,14 @@
-name: Mail test
-
-on: workflow_dispatch
- # schedule:
- #- cron: '*/5 * * * *'  # Run every 5 minutes
+'on':
+  workflow_call:
+    inputs:
+      env_value:
+        required: true
+        description: environment to run
+        type: string
 jobs:
-  send-email:
+  QA-TEST:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Send email
-        run: |
-          echo "Subject: Job Status - "
+       - name: print statement       
+         run: | 
+           echo " ====== Running ${{ inputs.env_value }}  TESTS ====== "
