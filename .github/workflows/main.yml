@@ -18,10 +18,23 @@ jobs:
         deviceName: [iPhone 14 Pro Max, iPhone 14 Pro,  iphone 13 Pro Max, iphone 13 Pro, iPhone 13, iPhone 12 Pro, iPhone 12, iPhone 11 ]
         osVersion: [15, 16]
         exclude:
-          - deviceName: "iPhone 11, iphone 13 Pro Max"
+          - deviceName: "iPhone 11"
             osVersion: 16
-          - deviceName: "iPhone 14 Pro Max, iPhone 14 Pro, iphone 13 Pro, iPhone 13, iPhone 12 Pro, iPhone 12"
+          - deviceName: "iphone 13 Pro Max"
+            osVersion: 16            
+          - deviceName: "iPhone 14 Pro Max"
             osVersion: 15
+          - deviceName: "iPhone 14 Pro"
+            osVersion: 15
+          - deviceName: "iphone 13 Pro"
+            osVersion: 15
+          - deviceName: "iPhone 13"
+            osVersion: 15
+          - deviceName: "iPhone 12 Pro"
+            osVersion: 15
+          - deviceName: "iPhone 12"
+            osVersion: 15
+            
     steps:
        - name: print statement       
          run: | 
