@@ -98,7 +98,6 @@ jobs:
 #          run: echo "matrix-condition=${{ inputs.application_name == 'android' }}" >> $GITHUB_ENV
 
   common-steps-and-after:
-    needs: [iOS-TEST, android-TEST]
     runs-on: ubuntu-latest   
     if: ${{ inputs.application_name == 'ios' || inputs.application_name == 'android'}}
     
@@ -106,5 +105,9 @@ jobs:
        - name: common step to run     
          run: | 
            echo " ====== Running common step  TESTS ====== "
+           echo "Test name :  ${{ inputs.suiteName }}"
+           echo "deviceName: ${{matrix.deviceName}}"
+           echo "osVersion: ${{matrix.osVersion}}"
+           
         
     
