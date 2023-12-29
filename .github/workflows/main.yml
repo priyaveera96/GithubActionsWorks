@@ -14,7 +14,7 @@
         description: suite to run
         type: string        
 jobs:
-  iOS-TEST:
+  iOS-bat:
     runs-on: ubuntu-latest
     strategy: 
       fail-fast: false
@@ -47,7 +47,7 @@ jobs:
            echo "Test name :  ${{ inputs.suiteName }}"
            echo "deviceName: ${{matrix.deviceName}}"
            echo "osVersion: ${{matrix.osVersion}}"
-  android-TEST:
+  android-bat:
     runs-on: ubuntu-latest
     strategy: 
       fail-fast: false
@@ -99,15 +99,14 @@ jobs:
 
   common-steps-and-after:
     runs-on: ubuntu-latest   
-    if: ${{ inputs.application_name == 'ios' || inputs.application_name == 'android'}}
+    if: ${{ needs.iOS-bat.outputs.result == 'success' || needs.android-bat.outputs.result == 'success' || inputs.application_name == 'android'}}
     
     steps:
        - name: common step to run     
          run: | 
            echo " ====== Running common step  TESTS ====== "
            echo "Test name :  ${{ inputs.suiteName }}"
-           echo "deviceName: ${{matrix.deviceName}}"
-           echo "osVersion: ${{matrix.osVersion}}"
+         
            
         
     
