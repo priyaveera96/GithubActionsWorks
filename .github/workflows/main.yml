@@ -100,7 +100,7 @@ jobs:
   common-steps-and-after:
     needs: [iOS-TEST, android-TEST, check-matrix-condition]
     runs-on: ubuntu-latest   
-    if: ${{ needs.check-matrix-condition.outputs.matrix-condition == 'true' }}
+    if: ${{ needs.check-matrix-condition.outputs.matrix-condition == 'true' || inputs.application_name == 'ios' }}
     
     steps:
        - name: common step to run     
