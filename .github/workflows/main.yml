@@ -88,19 +88,19 @@ jobs:
            echo "Test name :  ${{ inputs.suiteName }}"
            echo "deviceName: ${{matrix.deviceName}}"
            echo "osVersion: ${{matrix.osVersion}}"
-  check-matrix-condition:
-    runs-on: ubuntu-latest
-    outputs:
-      matrix-condition: ${{ steps.set-matrix-condition.outputs.matrix-condition }}
-    steps:
-      - name: Set matrix condition
-        id: set-matrix-condition
-        run: echo "matrix-condition=${{ inputs.application_name == 'android' }}" >> $GITHUB_ENV
+#  check-matrix-condition:
+#    runs-on: ubuntu-latest
+#      outputs:
+#        matrix-condition: ${{ steps.set-matrix-condition.outputs.matrix-condition }}
+#      steps:
+#        - name: Set matrix condition
+#          id: set-matrix-condition
+#          run: echo "matrix-condition=${{ inputs.application_name == 'android' }}" >> $GITHUB_ENV
 
   common-steps-and-after:
-    needs: [iOS-TEST, android-TEST, check-matrix-condition]
+    needs: [iOS-TEST, android-TEST]
     runs-on: ubuntu-latest   
-    if: ${{ needs.check-matrix-condition.outputs.matrix-condition == 'true' || inputs.application_name == 'ios' || inputs.application_name == 'android'}}
+    if: ${{ inputs.application_name == 'ios' || inputs.application_name == 'android'}}
     
     steps:
        - name: common step to run     
