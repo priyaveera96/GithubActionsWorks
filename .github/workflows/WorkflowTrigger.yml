@@ -1,23 +1,32 @@
 name: Trigger workflow
 on:
   workflow_dispatch:
-
+    inputs:
+      application_name:
+        default: android
+        description: "Application to run on - Android/iOS"
+        required: true
+        type: string
 jobs:
  LoginTest:
     uses: ./.github/workflows/main.yml
     with:
       env_value: qa_env
       suiteName: LoginTest
+      application_name: ${{inputs.application_name}}
  AdminTest:
     needs: LoginTest
     uses: ./.github/workflows/main.yml
     with:
       env_value: uat_env
-      suiteName: AdminTest      
+      suiteName: AdminTest  
+      application_name: ${{inputs.application_name}}      
  StorageTest:
     needs: AdminTest
     uses: ./.github/workflows/main.yml
     with:
       env_value: dev_env
-      suiteName: StorageTest      
+      suiteName: StorageTest 
+      application_name: ${{inputs.application_name}}
+      
       
