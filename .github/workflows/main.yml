@@ -5,12 +5,16 @@
         required: true
         description: environment to run
         type: string
+      application_name:
+        required: true
+        description: application to run
+        type: string   
       suiteName:
         required: true
         description: suite to run
         type: string        
 jobs:
-  QA-TEST:
+  iOS-TEST:
     runs-on: ubuntu-latest
     strategy: 
       fail-fast: false
@@ -34,11 +38,62 @@ jobs:
             osVersion: 15
           - deviceName: "iPhone 12"
             osVersion: 15
-            
+    if: ${{ inputs.application_name == 'ios' }}
+        
     steps:
-       - name: print statement       
+       - name: ios print statement       
          run: | 
            echo " ====== Running ${{ inputs.env_value }}  TESTS ====== "
            echo "Test name :  ${{ inputs.suiteName }}"
            echo "deviceName: ${{matrix.deviceName}}"
            echo "osVersion: ${{matrix.osVersion}}"
+  android-TEST:
+    runs-on: ubuntu-latest
+    strategy: 
+      fail-fast: false
+      matrix: 
+        deviceName: ["Galaxy S22 Ultra 5G", "Galaxy S22 5G", "Galaxy S21 Ultra 5G", "Galaxy S21 5G", "Pixel 6 Pro", "Pixel 7 Pro"]
+        osVersion: [11, 12, 13]
+        exclude:
+          - deviceName: "Galaxy S22 Ultra 5G"
+            osVersion: 11
+          - deviceName: "Galaxy S22 Ultra 5G"
+            osVersion: 13
+          - deviceName: "Galaxy S22 5G"
+            osVersion: 11            
+          - deviceName: "Galaxy S22 5G"
+            osVersion: 13
+          - deviceName: "Galaxy S21 Ultra 5G"
+            osVersion: 12
+          - deviceName: "Galaxy S21 Ultra 5G"
+            osVersion: 13
+          - deviceName: "Galaxy S21 5G"
+            osVersion: 11
+          - deviceName: "Galaxy S21 5G"
+            osVersion: 13
+          - deviceName: "Pixel 6 Pro"
+            osVersion: 11
+          - deviceName: "Pixel 6 Pro"
+            osVersion: 12
+          - deviceName: "Pixel 7 Pro"
+            osVersion: 11
+          - deviceName: "Pixel 7 Pro"
+            osVersion: 12            
+    if: ${{ inputs.application_name == 'android' }}
+        
+    steps:
+       - name: android print statement       
+         run: | 
+           echo " ====== Running ${{ inputs.env_value }}  TESTS ====== "
+           echo "Test name :  ${{ inputs.suiteName }}"
+           echo "deviceName: ${{matrix.deviceName}}"
+           echo "osVersion: ${{matrix.osVersion}}"
+  common-steps-and-after:
+    needs: [iOS-TEST, android-TEST]
+    runs-on: ubuntu-latest   
+    steps:
+       - name: common step       
+         run: | 
+           echo " ====== Running common step  TESTS ====== "
+        
+    
