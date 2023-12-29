@@ -7,16 +7,13 @@ jobs:
     uses: ./.github/workflows/main.yml
     with:
       env_value: qa_env
-    secrets: inherit
  AdminTest:
     needs: LoginTest
     uses: ./.github/workflows/main.yml
     with:
       env_value: uat_env
-    secrets: inherit
  StorageTest:
     needs: AdminTest
     uses: ./.github/workflows/main.yml
     with:
       env_value: dev_env
-    secrets: inherit
