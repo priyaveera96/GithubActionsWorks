@@ -3,14 +3,20 @@ on:
   workflow_dispatch:
 
 jobs:
-
-  LoginTest:
+ LoginTest:
     uses: ./.github/workflows/main.yml
     with:
-      application_name: vpp-api
-      environment: dev
-      test_environment: ${{ inputs.test_environment }}
-      PsuiteFile: EnrollmentsRegressionTest
-      application_project: enrollment
-      project_id: vpp-api-regression-test
+      env_value: qa_env
+    secrets: inherit
+ AdminTest:
+    needs: LoginTest
+    uses: ./.github/workflows/main.yml
+    with:
+      env_value: uat_env
+    secrets: inherit
+ StorageTest:
+    needs: AdminTest
+    uses: ./.github/workflows/main.yml
+    with:
+      env_value: dev_env
     secrets: inherit
