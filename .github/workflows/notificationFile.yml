@@ -29,4 +29,5 @@ jobs:
           body: ${{ steps.read-html.outputs.stdout }}
           to: priyaveera96@gmail.com
           from: notificsunpower@gmail.com
-          content: text/html
+          content_type: text/html
+          attachments: ./test.html
