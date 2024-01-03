@@ -16,7 +16,6 @@ jobs:
         run: |
           html_content=$(cat test.html)
           echo "html_content = $html_content "
-
       - name: Send mail notification
         if: ${{ always() }}
         uses: dawidd6/action-send-mail@v2
