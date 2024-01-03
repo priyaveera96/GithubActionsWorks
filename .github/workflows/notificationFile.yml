@@ -23,7 +23,7 @@ jobs:
        runs-on: ubuntu-latest
        steps:
          - name: Send mail notification
-           uses: dawidd6/action-send-mail@v2
+           uses: dawidd6/action-send-mail@v3.9.0
            with:
              server_address: smtp.gmail.com
              server_port: 587
