@@ -1,20 +1,33 @@
-name: Scheduled Job
+name: Send Email with HTML Body
 
-on:
-  schedule:
-    - cron: '0 0 * * *'  # Run daily at midnight
+on: workflow_dispatch
+
+env:
+ html_content: "
 
 jobs:
-  send-email:
+  sendemail:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Send email
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Read HTML file content
+        id: read-html
         run: |
-          echo "Subject: Job Status - ${{ github.repository }}" > email.txt
-          echo "" >> email.txt
-          echo "The scheduled job ran on ${{ github.repository }}." >> email.txt
-          echo "Status: ${{ job.status }}" >> email.txt
-          # Add more details as needed
-          # Use a tool like mailx or another mail client to send the email
-          cat email.txt | mailx -s "Job Status - ${{ github.repository }}" user@example.com
+          # Read the contents of your HTML file
+          html_content=$(cat test.html)
+          echo "html_content=$html_content" >> $GITHUB_ENV
+
+      - name: Send mail notification
+        if: ${{ always() }}
+        uses: dawidd6/action-send-mail@v2
+        with:
+          server_address: smtp.gmail.com
+          server_port: 587
+          username: "notificsunpower@gmail.com"
+          password: "xhbexzslqdxniljz"
+          subject: Monitoring Coverage Report
+          body: ${{ env.html_content }}
+          to: priyaveera96@gmail.com
+          from: notificsunpower@gmail.com
