@@ -4,6 +4,7 @@ on: workflow_dispatch
 
 env:
  HTML_CONTENT: '<html><body><p>This is the HTML content</p></body></html>'
+ html_content: ""
 
 jobs:
   sendemail:
@@ -16,18 +17,21 @@ jobs:
         id: read-html
         run: |
           html_content=$(cat test.html)
-          cat test.html   
-     
-      - name: Send mail notification
-        uses: dawidd6/action-send-mail@v2
-        with:
-          server_address: smtp.gmail.com
-          server_port: 587
-          username: notificsunpower@gmail.com
-          password: xhbexzslqdxniljz
-          subject: Monitoring Coverage Report
-          body: ${{ env.HTML_CONTENT }}
-          content_type: text/html
-          to: priyaveera96@gmail.com
-          from: notificsunpower@gmail.com
-          attachments: ./test.html
+
+  Send-Notifation:
+       needs: sendemail
+       runs-on: ubuntu-latest
+       steps:
+         - name: Send mail notification
+           uses: dawidd6/action-send-mail@v2
+           with:
+             server_address: smtp.gmail.com
+             server_port: 587
+             username: notificsunpower@gmail.com
+             password: xhbexzslqdxniljz
+             subject: Monitoring Coverage Report
+             body: ${{ env.html_content }} 
+             content_type: text/html
+             to: priyaveera96@gmail.com
+             from: notificsunpower@gmail.com
+             attachments: ./test.html
