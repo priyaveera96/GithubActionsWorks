@@ -4,19 +4,21 @@ on: workflow_dispatch
 
 env:
 # HTML_CONTENT: '<html><body><p>This is the HTML content</p></body></html>'
- html_content: ""
+  html_content: ""
 
 jobs:
   sendemail:
     runs-on: ubuntu-latest
+    outputs:
+      env: ${{ steps.set-html-content.outputs.env }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
 
       - name: Read HTML file content
-        id: read-html
+        id: set-html-content
         run: |
-          html_content=$(cat test.html)
+          echo "html_content=$(cat test.html)"
 
   Send-Notifation:
        needs: sendemail
