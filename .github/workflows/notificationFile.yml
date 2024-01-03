@@ -36,4 +36,3 @@ jobs:
              content_type: text/html
              to: priyaveera96@gmail.com
              from: notificsunpower@gmail.com
-             attachments: test.html
