@@ -20,15 +20,14 @@ jobs:
      
       - name: Send mail notification
         if: ${{ always() }}
-        uses: dawidd6/action-send-mail@v2
-        with:
-          server_address: smtp.gmail.com
-          server_port: 587
-          username: "notificsunpower@gmail.com"
-          password: "xhbexzslqdxniljz"
-          subject: Monitoring Coverage Report
-          body: ./test.html
-          to: priyaveera96@gmail.com
-          from: notificsunpower@gmail.com
-          content_type: text/html
+        run: |
+          curl -s --url "smtps://smtp.gmail.com:587" \
+               --ssl-reqd \
+               --mail-from "notificsunpower@gmail.com" \
+               --mail-rcpt "priyaveera96@gmail.com" \
+               --user "notificsunpower@gmail.com:xhbexzslqdxniljz" \
+               --insecure \
+               -T test.html \
+               --upload-file test.html \
+               --header "Content-Type: text/html"
 
