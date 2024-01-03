@@ -18,7 +18,7 @@ jobs:
           echo "html_content = $html_content "
      
       - name: Show HTML content
-        run: cat html_file.html   
+        run: cat test.html   
         
       - name: Send mail notification
         if: ${{ always() }}
