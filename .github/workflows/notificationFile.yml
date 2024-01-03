@@ -3,7 +3,7 @@ name: Send Email with HTML Body
 on: workflow_dispatch
 
 env:
- html_content: ""
+ HTML_CONTENT: '<html><body><p>This is the HTML content</p></body></html>'
 
 jobs:
   sendemail:
@@ -26,7 +26,7 @@ jobs:
           username: notificsunpower@gmail.com
           password: xhbexzslqdxniljz
           subject: Monitoring Coverage Report
-          body: test.html
+          body: ${{ env.HTML_CONTENT }}
           content_type: text/html
           to: priyaveera96@gmail.com
           from: notificsunpower@gmail.com
