@@ -3,7 +3,7 @@ name: Send Email with HTML Body
 on: workflow_dispatch
 
 env:
- HTML_CONTENT: '<html><body><p>This is the HTML content</p></body></html>'
+# HTML_CONTENT: '<html><body><p>This is the HTML content</p></body></html>'
  html_content: ""
 
 jobs:
