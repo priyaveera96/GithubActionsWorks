@@ -2,10 +2,6 @@ name: Send Email with HTML Body
 
 on: workflow_dispatch
 
-env:
-# HTML_CONTENT: '<html><body><p>This is the HTML content</p></body></html>'
- html_content: ""
-
 jobs:
   sendemail:
     runs-on: ubuntu-latest
@@ -16,8 +12,7 @@ jobs:
 
       - name: Read HTML file content
         id: set-html-content
-        run: |
-          echo "html_content=$(cat test.html)"
+        run: echo "html-content=$(cat test.html)" >> "$GITHUB_OUTPUT"
   Send-Notifation:
        needs: sendemail
        runs-on: ubuntu-latest
@@ -30,7 +25,7 @@ jobs:
              username: notificsunpower@gmail.com
              password: xhbexzslqdxniljz
              subject: Monitoring Coverage Report
-             html_body: file://test.html
+             body: ${{ steps.set-html-content.outputs.html-content }}
              content_type: text/html
              to: priyaveera96@gmail.com
              from: notificsunpower@gmail.com
