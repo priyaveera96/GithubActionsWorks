@@ -15,7 +15,7 @@ jobs:
       - name: Read HTML file content
         run: |
           html_content=$(cat test.html)
-          echo "html_content=$html_content"
+          echo "html_content = $html_content "
 
       - name: Send mail notification
         if: ${{ always() }}
