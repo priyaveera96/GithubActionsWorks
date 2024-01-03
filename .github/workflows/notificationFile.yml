@@ -13,13 +13,11 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Read HTML file content
+        id: read-html
         run: |
           html_content=$(cat test.html)
-          echo "html_content = $html_content "
+          cat test.html   
      
-      - name: Show HTML content
-        run: cat test.html   
-        
       - name: Send mail notification
         if: ${{ always() }}
         uses: dawidd6/action-send-mail@v2
@@ -29,6 +27,6 @@ jobs:
           username: "notificsunpower@gmail.com"
           password: "xhbexzslqdxniljz"
           subject: Monitoring Coverage Report
-          body: ./test.html
+          body: ${{ steps.read-html.outputs.stdout }}
           to: priyaveera96@gmail.com
           from: notificsunpower@gmail.com
