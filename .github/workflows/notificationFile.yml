@@ -32,7 +32,7 @@ jobs:
              username: notificsunpower@gmail.com
              password: xhbexzslqdxniljz
              subject: Monitoring Coverage Report
-             body: ${{ env.html_content }} 
+             body: $(cat test.html)
              content_type: text/html
              to: priyaveera96@gmail.com
              from: notificsunpower@gmail.com
