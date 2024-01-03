@@ -27,7 +27,7 @@ jobs:
           password: xhbexzslqdxniljz
           subject: Monitoring Coverage Report
           body: test.html
+          content_type: text/html
           to: priyaveera96@gmail.com
           from: notificsunpower@gmail.com
-          content_type: text/html
           attachments: ./test.html
