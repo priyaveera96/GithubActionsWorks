@@ -13,11 +13,9 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Read HTML file content
-        id: read-html
         run: |
-          # Read the contents of your HTML file
           html_content=$(cat test.html)
-          echo "html_content=$html_content" >> $GITHUB_ENV
+          echo "html_content=$html_content"
 
       - name: Send mail notification
         if: ${{ always() }}
