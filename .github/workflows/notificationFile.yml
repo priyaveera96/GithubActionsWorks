@@ -2,9 +2,9 @@ name: Send Email with HTML Body
 
 on: workflow_dispatch
 
-env:
+#env:
 # HTML_CONTENT: '<html><body><p>This is the HTML content</p></body></html>'
-  html_content: ""
+#  html_content: ""
 
 jobs:
   sendemail:
@@ -17,7 +17,7 @@ jobs:
       - name: Read HTML file content
         id: set-html-content
         run: |
-          echo "html_content=$(cat test.html)"
+          echo "html_content=$(cat test.html)" >> $GITHUB_ENV
 
   Send-Notifation:
        needs: sendemail
