@@ -31,9 +31,9 @@ jobs:
 
       - name: Run Newman
         run: |
-          echo "TEST_FILES=${{ github.workspace }}/src/msp/env/Gql_QA_Bat_Environment.postman_environment.json" >> "$GITHUB_ENV"
-          echo "TEST_ENV_FILES_LOCATION=${{ github.workspace }}/src/msp/env" >> "$GITHUB_ENV"
-          echo "RUNNER_FILES=${{ github.workspace }}/src/msp/GQL_BAT_Test_Case.postman_collection.json" >> "$GITHUB_ENV"
+          echo "TEST_FILES=src/msp/env/Gql_QA_Bat_Environment.postman_environment.json" >> "$GITHUB_ENV"
+          echo "TEST_ENV_FILES_LOCATION=src/msp/env" >> "$GITHUB_ENV"
+          echo "RUNNER_FILES=src/msp/GQL_BAT_Test_Case.postman_collection.json" >> "$GITHUB_ENV"
           jq --arg variable "$MSP_QA_GQL_USERNAME" '.values[3].value = $variable' ${TEST_FILES} > $TEST_ENV_FILES_LOCATION/test_env_file.json
           jq --arg variable "$MSP_QA_GQL_PASSWORD" '.values[4].value = $variable' $TEST_ENV_FILES_LOCATION/test_env_file.json > $TEST_ENV_FILES_LOCATION/test_env_file1.json
           jq --arg variable "$EDP_QA_API_USERNAME" '.values[5].value = $variable' $TEST_ENV_FILES_LOCATION/test_env_file1.json > $TEST_ENV_FILES_LOCATION/test_env_file2.json
