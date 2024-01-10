@@ -31,10 +31,6 @@ jobs:
 
       - name: Run Newman
         run: |
-          echo "MSP_QA_GQL_USERNAME: $MSP_QA_GQL_USERNAME"
-          echo "MSP_QA_GQL_PASSWORD: $MSP_QA_GQL_PASSWORD"
-          echo "EDP_QA_API_USERNAME: $EDP_QA_API_USERNAME"
-          echo "EDP_QA_API_PASSWORD: $EDP_QA_API_PASSWORD"
-          
-          test =$(newman run src/msp/GQL_BAT_Test_Case.postman_collection.json -e src/msp/Gql_QA_Bat_Environment.postman_environment.json)
+          bash 
+          newman run src/msp/GQL_BAT_Test_Case.postman_collection.json -e src/msp/Gql_QA_Bat_Environment.postman_environment.json) -r htmlextra
 
