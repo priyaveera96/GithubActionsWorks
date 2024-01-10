@@ -1,0 +1,2053 @@
+{
+	"info": {
+		"_postman_id": "4dbb3cb1-8cfc-412c-8446-432f576c97b2",
+		"name": "GQL_BAT_Test_Case",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "18728711"
+	},
+	"item": [
+		{
+			"name": "Fetch_Site_Query",
+			"item": [
+				{
+					"name": "EDP_Sign_In",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"accessToken\", function(){",
+									"    var test = pm.response.json();",
+									"   pm.environment.set(\"EDP_Auth\",test.access_token);",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n   \"username\": \"{{EDP_username}}\",\n   \"password\": \"{{EDP_password}}\",\n   \"remember\": \"true\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{edp-api}}/v1/auth/okta/signin",
+							"host": [
+								"{{edp-api}}"
+							],
+							"path": [
+								"v1",
+								"auth",
+								"okta",
+								"signin"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "SignIn",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var test = pm.response.json();\r",
+									"\r",
+									"pm.test(\"Verify user is able to to Sign-in\",function() {\r",
+									"console.log(pm.response.status);\r",
+									"console.log(test.data.authenticateUser.accessToken);\r",
+									"})\r",
+									"\r",
+									"pm.test(\"accessToken\", function(){\r",
+									"\r",
+									"   pm.environment.set(\"Auth\", test.data.authenticateUser.accessToken);\r",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "graphql",
+							"graphql": {
+								"query": "mutation($username: String!, $password: String!, $remember: String!) {\r\n  authenticateUser(params: {\r\n    username: $username\r\n    password: $password\r\n    remember: $remember\r\n  }) {\r\n    accessToken\r\n    refreshToken\r\n    idToken\r\n    expiresIn\r\n    tokenType\r\n  }\r\n}",
+								"variables": "{\r\n    \"username\": \"{{Username}}\",\r\n    \"password\": \"{{Password}}\",\r\n    \"remember\": \"true\"\r\n}"
+							}
+						},
+						"url": {
+							"raw": "{{graphql}}/graphql",
+							"host": [
+								"{{graphql}}"
+							],
+							"path": [
+								"graphql"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Auth_JWT",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var test = pm.response.json();",
+									"",
+									"pm.test(\"JWT\", function(){",
+									"",
+									"   pm.environment.set(\"JWT\", test.data.generateToken.jwt);",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{Auth}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "graphql",
+							"graphql": {
+								"query": "mutation Mutation {\n  generateToken {\n    token_type\n    expires_in\n    jwt\n    scope\n  }\n}",
+								"variables": ""
+							}
+						},
+						"url": {
+							"raw": "{{graphql}}/graphql",
+							"host": [
+								"{{graphql}}"
+							],
+							"path": [
+								"graphql"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "EDP_Weather_V1_call",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"let responseJson = pm.response.json();",
+									"",
+									"pm.test(\"weather_main\", function(){",
+									"",
+									"   pm.environment.set(\"weather_main\",responseJson.weather[0].main);",
+									"})",
+									"",
+									"pm.test(\"weather_icon\", function(){",
+									"",
+									"   pm.environment.set(\"weather_icon\",responseJson.weather[0].icon);",
+									"})",
+									"",
+									"",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{EDP_Auth}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{edp-api}}/v1/site/{{sitekey}}/currentweather",
+							"host": [
+								"{{edp-api}}"
+							],
+							"path": [
+								"v1",
+								"site",
+								"{{sitekey}}",
+								"currentweather"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "EDP_Weather_V2_call",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"let responseJson = pm.response.json();",
+									"",
+									"pm.test(\"datetimeEpoch\", function(){",
+									"",
+									"   pm.environment.set(\"datetimeEpoch\",responseJson.datetimeEpoch);",
+									"})",
+									"",
+									"pm.test(\"sunriseEpoch\", function(){",
+									"",
+									"   pm.environment.set(\"sunriseEpoch\",responseJson.sunriseEpoch);",
+									"})",
+									"",
+									"pm.test(\"sunsetEpoch\", function(){",
+									"",
+									"   pm.environment.set(\"sunsetEpoch\",responseJson.sunsetEpoch);",
+									"})",
+									"",
+									"pm.test(\"temp\", function(){",
+									"",
+									"   pm.environment.set(\"temp\",JSON.stringify(responseJson.temp));",
+									"})",
+									"",
+									"pm.test(\"feelslike\", function(){",
+									"",
+									"   pm.environment.set(\"feelslike\",JSON.stringify(responseJson.feelslike));",
+									"})",
+									"",
+									"",
+									"",
+									"",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{EDP_Auth}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{edp-api}}/v2/site/{{sitekey}}/currentweather",
+							"host": [
+								"{{edp-api}}"
+							],
+							"path": [
+								"v2",
+								"site",
+								"{{sitekey}}",
+								"currentweather"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Weather",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"let responseJson = pm.response.json();",
+									"",
+									"pm.test(\"Response\", function(){        ",
+									"    console.log(responseJson);",
+									"})",
+									"",
+									"pm.test(\"Validate if the dateTime matches as edp\", function(){        ",
+									"   pm.expect(responseJson.data.site.currentWeather.dateTime).is.eql(environment.datetimeEpoch); ",
+									"})",
+									"pm.test(\"Validate if the sunrise matches with EDP\", function(){        ",
+									"    pm.expect(responseJson.data.site.currentWeather.sunrise).is.eql(environment.sunriseEpoch);",
+									"})",
+									"pm.test(\"Validate if the sunset matches with EDP\", function(){        ",
+									"    pm.expect(responseJson.data.site.currentWeather.sunset).is.eql(environment.sunsetEpoch);",
+									"})",
+									"",
+									"pm.test(\"Validate if the weatherCondition matches with EDP\", function(){        ",
+									"    pm.expect(responseJson.data.site.currentWeather.weatherCondition).is.eql(environment.weather_main);",
+									"})",
+									"",
+									"pm.test(\"Validate if the weatherIcon matches with EDP\", function(){        ",
+									"    pm.expect(responseJson.data.site.currentWeather.weatherIcon).is.eql(environment.weather_icon);",
+									"})",
+									"pm.test(\"Validate if the temp matches with EDP\", function(){        ",
+									"    pm.expect(responseJson.data.site.currentWeather.temperature).is.equals(environment.temp);",
+									"})",
+									"pm.test(\"Validate if the feelslike matches with EDP\", function(){        ",
+									"    pm.expect(responseJson.data.site.currentWeather.feelsLikeTemperature).is.equals(environment.feelslike);",
+									"})",
+									"",
+									"",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{Auth}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "graphql",
+							"graphql": {
+								"query": "query CurrentWeather($siteKey: String!) {\n  site(siteKey: $siteKey) {\n    currentWeather {\n      id\n      weatherCondition\n      weatherIcon\n      timezone\n      dateTime\n      sunrise\n      sunset\n      temperature\n      feelsLikeTemperature\n      conditions\n    }\n  }\n}",
+								"variables": "{\n  \"siteKey\": \"{{sitekey}}\"\n}\n"
+							}
+						},
+						"url": {
+							"raw": "{{graphql}}/graphql",
+							"host": [
+								"{{graphql}}"
+							],
+							"path": [
+								"graphql"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "EDP_Battery",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"let responseJson = pm.response.json();",
+									"",
+									"pm.test(\"Verify Battery Data\",function() {",
+									"pm.response.status;",
+									"})",
+									"",
+									"pm.test(\"operationMode\", function(){",
+									"    ",
+									"   pm.environment.set(\"value\",responseJson.items[0].value);",
+									"})",
+									"",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{EDP_Auth}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{edp-api}}/v1/site/{{Storage_site}}/characteristic",
+							"host": [
+								"{{edp-api}}"
+							],
+							"path": [
+								"v1",
+								"site",
+								"{{Storage_site}}",
+								"characteristic"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "EDP_Battery_Mode",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"let responseJson = pm.response.json();",
+									"",
+									"pm.test(\"Verify Battery Data\",function() {",
+									"pm.response.status;",
+									"})",
+									"",
+									"pm.test(\"siteLevelStateOfChargePercentage\", function(){",
+									"    ",
+									"   pm.environment.set(\"siteLevelStateOfChargePercentage\",responseJson.meta.siteLevelStateOfChargePercentage);",
+									"})",
+									"",
+									"pm.test(\"siteLevelCustomerStateOfChargePercentage\", function(){",
+									"    ",
+									"   pm.environment.set(\"siteLevelCustomerStateOfChargePercentage\",responseJson.meta.siteLevelCustomerStateOfChargePercentage);",
+									"})",
+									"",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{EDP_Auth}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{edp-api}}/v1/site/{{Storage_site}}/metric/battery",
+							"host": [
+								"{{edp-api}}"
+							],
+							"path": [
+								"v1",
+								"site",
+								"{{Storage_site}}",
+								"metric",
+								"battery"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Battery",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"let responseJson = pm.response.json();",
+									"",
+									"pm.test(\"Verify success response fields\", function(){ ",
+									"    console.log(pm.response.status);       ",
+									"})",
+									"",
+									"pm.test(\"Response\", function(){        ",
+									"    console.log(responseJson);",
+									"})",
+									"",
+									"pm.test(\"Validate if siteLevelStateOfChargePercentage value is matches with EDP\", function(){        ",
+									"    pm.expect(responseJson.data.site.battery.siteLevelCustomerStateOfChargePercentage).is.eql(environment.siteLevelCustomerStateOfChargePercentage);",
+									"})",
+									"",
+									"",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{Auth}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "graphql",
+							"graphql": {
+								"query": "query Battery($siteKey: String!) {\n  site(siteKey: $siteKey) {\n    battery {\n      backupDays\n      backupDaysLeft\n      backUpReserveSocLevel\n      backupTimeLeft {\n        formatted {\n          days\n          hours\n          minutes\n        }\n        totalMinutes\n      }\n      operationMode\n      siteKey\n      siteLevelCustomerStateOfChargePercentage\n      socAndChargeCapacity {\n        chargeCapacity\n        comSerialNumber\n        customerStateOfCharge\n        deviceKey\n        deviceSerialNumber\n        parentSerialNumber\n        productModelName\n        stateOfChargePercentage\n      }\n    }\n  }\n}",
+								"variables": "{\n  \"siteKey\": \"{{Storage_site}}\"\n}\n"
+							}
+						},
+						"url": {
+							"raw": "{{graphql}}/graphql",
+							"host": [
+								"{{graphql}}"
+							],
+							"path": [
+								"graphql"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "EDP_Service_Codes",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"let responseJson = pm.response.json();",
+									"",
+									"pm.test(\"AlrtNm\", function(){ ",
+									"   pm.environment.set(\"AlrtNm\",responseJson.items[0].AlrtNm);",
+									"})",
+									"",
+									"pm.test(\"ComDvcSn\", function(){ ",
+									"   pm.environment.set(\"ComDvcSn\",responseJson.items[0].ComDvcSn);",
+									"})",
+									"",
+									"pm.test(\"AlrtStFl\", function(){ ",
+									"   pm.environment.set(\"AlrtStFl\",responseJson.items[0].AlrtStFl);",
+									"})",
+									"",
+									"pm.test(\"DvcTy\", function(){ ",
+									"   pm.environment.set(\"AlrtNm\",responseJson.items[0].DvcTy);",
+									"})",
+									"",
+									"pm.test(\"AlrtKey\", function(){ ",
+									"   pm.environment.set(\"AlrtKey\",responseJson.items[0].AlrtKey);",
+									"})",
+									"",
+									"pm.test(\"ProdMdlNm\", function(){ ",
+									"   pm.environment.set(\"AlrtKey\",responseJson.items[0].ProdMdlNm);",
+									"})",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{EDP_Auth}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{edp-api}}/v1/site/E_22127/storage/alerts?include-resolved=false",
+							"host": [
+								"{{edp-api}}"
+							],
+							"path": [
+								"v1",
+								"site",
+								"E_22127",
+								"storage",
+								"alerts"
+							],
+							"query": [
+								{
+									"key": "include-resolved",
+									"value": "false"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Service_Codes",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"let responseJson = pm.response.json();",
+									"",
+									"pm.test(\"Verify success response fields\", function(){ ",
+									"    console.log(\"OK\", pm.response.status);       ",
+									"})",
+									"",
+									"pm.test(\"Response\", function(){        ",
+									"    console.log(responseJson);",
+									"})",
+									"",
+									"pm.test(\"Validate if the prodMdlNm value is matches with EDP\", function(){        ",
+									"    pm.expect(responseJson.data.site.serviceCodes.prodMdlNm).is.eql(environment.ProdMdlNm);",
+									"})",
+									"",
+									"pm.test(\"Validate if the comDvcSn value is matches with EDP\", function(){        ",
+									"    pm.expect(responseJson.data.site.serviceCodes.comDvcSn).is.eql(environment.comDvcSn);",
+									"})",
+									"",
+									"pm.test(\"Validate if the alrtStFl value is matches with EDP\", function(){        ",
+									"    pm.expect(responseJson.data.site.serviceCodes.alrtStFl).is.eql(environment.alrtStFl);",
+									"})",
+									"",
+									"pm.test(\"Validate if the dvcTy is matches with EDP\", function(){        ",
+									"    pm.expect(responseJson.data.site.serviceCodes.dvcTy).is.eql(environment.dvcTy);",
+									"})",
+									"",
+									"pm.test(\"Validate if the alrtNm is matches with EDP\", function(){        ",
+									"    pm.expect(responseJson.data.site.serviceCodes.alrtNm).is.eql(environment.alrtNm);",
+									"})",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{Auth}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "graphql",
+							"graphql": {
+								"query": "query ServiceCodes($siteKey: String!) {\n  site(siteKey: $siteKey) {\n    serviceCodes {\n      alrtKey\n      prodMdlNm\n      comDvcSn\n      connDvcSn\n      dvcTy\n      alrtNm\n      alrtStFl\n      trgrdEps\n      rslvdEps\n    }\n  }\n}\n",
+								"variables": "{\n  \"siteKey\": \"E_22127\"\n}\n"
+							}
+						},
+						"url": {
+							"raw": "{{graphql}}/graphql",
+							"host": [
+								"{{graphql}}"
+							],
+							"path": [
+								"graphql"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "EDP_subscriptions",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"let responseJson = pm.response.json();",
+									"",
+									"pm.test(\"subscriptionId\", function(){ ",
+									"   pm.environment.set(\"subscriptionId1\",(JSON.stringify(responseJson[0].subscriptionId)));",
+									"})",
+									"",
+									"pm.test(\"statusIndicator\", function(){ ",
+									"   pm.environment.set(\"statusIndicator\",(JSON.stringify(responseJson[0].statusIndicator)));",
+									"})",
+									"",
+									"pm.test(\"siteKey\", function(){ ",
+									"   pm.environment.set(\"siteKey\",(JSON.stringify(responseJson[0].siteKey)));",
+									"})",
+									"",
+									"pm.test(\"reportTypeName\", function(){ ",
+									"   pm.environment.set(\"reportTypeName\",(JSON.stringify(responseJson[0].reportTypeName)));",
+									"})",
+									"",
+									"pm.test(\"reportDisplayName\", function(){ ",
+									"   pm.environment.set(\"reportDisplayName\",(JSON.stringify(responseJson[0].reportDisplayName)));",
+									"})",
+									"",
+									"pm.test(\"email\", function(){ ",
+									"   pm.environment.set(\"email1\",(JSON.stringify(responseJson[0].subscribers[0].email)));",
+									"})",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{EDP_Auth}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{edp-api}}/v1/site/{{Sitekey}}/subscriptions?reportType=ResiMonthlyPerformanceReport",
+							"host": [
+								"{{edp-api}}"
+							],
+							"path": [
+								"v1",
+								"site",
+								"{{Sitekey}}",
+								"subscriptions"
+							],
+							"query": [
+								{
+									"key": "reportType",
+									"value": "ResiMonthlyPerformanceReport"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Performance_Report",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"let responseJson = pm.response.json();",
+									"pm.test(\"Verify success response fields\", function(){ ",
+									"    console.log(\"OK\", pm.response.status);       ",
+									"})",
+									"",
+									"pm.test(\"Response\", function(){        ",
+									"    console.log(responseJson);",
+									"})",
+									"",
+									"pm.test(\"Validate if the subscriptionId matches with EDP\", function(){        ",
+									"    pm.expect(JSON.stringify(responseJson.data.site.performanceReport.subscriptionId)).is.eql(environment.subscriptionId1);",
+									"})",
+									"",
+									"pm.test(\"Validate if the reportTypeName matches with EDP\", function(){        ",
+									"    pm.expect(JSON.stringify(responseJson.data.site.performanceReport.reportTypeName)).is.eql(environment.reportTypeName);",
+									"})",
+									"",
+									"pm.test(\"Validate if the reportDisplayName matches with EDP\", function(){        ",
+									"    pm.expect(JSON.stringify(responseJson.data.site.performanceReport.reportDisplayName)).is.eql(environment.reportDisplayName);",
+									"})",
+									"",
+									"pm.test(\"Validate if the statusIndicator matches with EDP\", function(){        ",
+									"    pm.expect(JSON.stringify(responseJson.data.site.performanceReport.statusIndicator)).is.eql(environment.statusIndicator);",
+									"})",
+									"",
+									"pm.test(\"Validate if the email matches with EDP\", function(){        ",
+									"    pm.expect(JSON.stringify(responseJson.data.site.performanceReport.subscribers[0].email)).is.eql(environment.email1);",
+									"})",
+									"",
+									"pm.test(\"Validate if the siteKey matches with EDP\", function(){        ",
+									"    pm.expect(JSON.stringify(responseJson.data.site.performanceReport.siteKey)).is.eql(environment.siteKey);",
+									"})",
+									"",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{Auth}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "graphql",
+							"graphql": {
+								"query": "query PerformanceReport($siteKey: String!) {\n  site(siteKey: $siteKey) {\n    performanceReport {\n      subscriptionId\n      siteKey\n      reportTypeName\n      reportDisplayName\n      statusIndicator\n      fileFormat\n      scheduleDay\n      nextRun\n      nextPeriod {\n        start\n        end\n      }\n      expirationDate\n      subscribers {\n        email\n        statusIndicator\n      }\n    }\n  }\n}",
+								"variables": "{\n  \"siteKey\": \"{{Sitekey}}\"\n}\n"
+							}
+						},
+						"url": {
+							"raw": "{{graphql}}/graphql",
+							"host": [
+								"{{graphql}}"
+							],
+							"path": [
+								"graphql"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "EDP_Assignments",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"let responseJson = pm.response.json();",
+									"",
+									"pm.test(\"siteType\", function(){ ",
+									"   pm.environment.set(\"siteType\",JSON.stringify(responseJson.siteType));",
+									"})",
+									"",
+									"pm.test(\"siteKey\", function(){ ",
+									"   pm.environment.set(\"siteKey\",responseJson.assignments[0].siteKey);",
+									"})",
+									"",
+									"/*pm.test(\"assignmentType\", function(){ ",
+									"   pm.environment.set(\"assignmentType\",responseJson.assignments[i].assignmentType);",
+									"   console.log(assignmentType);",
+									"})*/",
+									"",
+									"pm.test(\"firstCommissionCommandDate\", function(){ ",
+									"   pm.environment.set(\"firstCommissionCommandDate\",JSON.stringify(responseJson.assignments[0].firstCommissionCommandDate));",
+									"})",
+									"",
+									"/*pm.test(\"siteAssignmentType\", function(){ ",
+									"   pm.environment.set(\"siteAssignmentType\",responseJson.siteAssignmentType);",
+									"})*/",
+									"",
+									"pm.test(\"deviceSerialNumber\", function(){ ",
+									"   pm.environment.set(\"deviceSerialNumber\",responseJson.assignments[0].deviceSerialNumber);",
+									"})",
+									"",
+									"",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{EDP_Auth}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{edp-api}}/v1/site/{{Site}}",
+							"host": [
+								"{{edp-api}}"
+							],
+							"path": [
+								"v1",
+								"site",
+								"{{Site}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Assignments",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"let responseJson = pm.response.json();",
+									"",
+									"pm.test(\"Verify success response fields\", function(){ ",
+									"    console.log(\"OK\", pm.response.status);   ",
+									"})",
+									"",
+									"pm.test(\"Response\", function(){        ",
+									"    console.log(responseJson);",
+									"})",
+									"",
+									"/*pm.test(\"Validate if the siteType matches with EDP\", function(){        ",
+									"    pm.expect(responseJson.data.site.siteType).is.eql(environment.siteAssignmentType);",
+									"})*/",
+									"",
+									"/*pm.test(\"Validate if the acommissioningDate matches with EDP\", function(){        ",
+									"    pm.expect(JSON.stringify(responseJson.data.site.assignments[0].assignmentEffectiveTimestamp)).is.eql(environment.firstCommissionCommandDate);",
+									"})*/",
+									"",
+									"/*pm.test(\"Validate if the assignmentType matches with EDP\", function(){        ",
+									"    pm.expect(responseJson.data.site.assignments[0].assignmentType).is.eql(environment.assignmentType);",
+									"})",
+									"",
+									"pm.test(\"Validate if the deviceSerialNumber matches with EDP\", function(){        ",
+									"    pm.expect(responseJson.data.site.assignments[0].deviceSerialNumber).is.eql(environment.deviceSerialNumber);",
+									"})*/",
+									"",
+									"",
+									"",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{Auth}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "graphql",
+							"graphql": {
+								"query": "query($siteKey: String!) {\n    site(siteKey: $siteKey) {\n        commissioningDate\n        hasLivedata\n        siteType\n        assignments(assignmentType: COMMISSION) {\n            deviceType\n            deviceKey\n            deviceSerialNumber\n            assignmentType\n            assignmentEffectiveTimestamp\n            Logger: devices(deviceType: \"logger\") {\n                dvcKey\n                dvcTy\n                fwVerNo\n                sfwVerNo\n                comProto\n                deviceStatus{\n                    essStatus\n                    pvStatus\n                    netIntfRptCtnt{\n                        currNetIntfEnum\n                        prevNetIntfEnum\n                        sta0Ssid\n                        wifiIconBars\n                        cellIconBars\n                    }\n                }\n            }\n            Meters: devices(deviceType:\"meter\", deviceStatus:true){\n                dvcKey\n                lastRcvdEps\n                meterType{\n                    type\n                    level\n                }\n            }\n        }\n    }\n}",
+								"variables": "{\n  \"siteKey\": \"{{Site}}\"\n}\n"
+							}
+						},
+						"url": {
+							"raw": "{{graphql}}/graphql",
+							"host": [
+								"{{graphql}}"
+							],
+							"path": [
+								"graphql"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "EDP_Alerts",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"let responseJson = pm.response.json();",
+									"",
+									"pm.test(\"alertId\", function(){ ",
+									"   { ",
+									"    let type = responseJson.items[0].alertId",
+									"    let alertId1 = type.toLowerCase();",
+									"   pm.environment.set(\"alertId1\", alertId1);",
+									"   console.log(alertId1);",
+									"",
+									"}",
+									"})",
+									"",
+									"pm.test(\"deviceSerialNumber\", function(){ ",
+									"   pm.environment.set(\"deviceSerialNumber\",responseJson.items[0].deviceSerialNumber);",
+									"})",
+									"",
+									"pm.test(\"siteKey\", function(){ ",
+									"   pm.environment.set(\"siteKey\",responseJson.items[0].siteKey);",
+									"})",
+									"",
+									"pm.test(\"alertType\", function(){ ",
+									"    let type = responseJson.items[0].alertType",
+									"    let alertType = type.toLowerCase();",
+									"   pm.environment.set(\"alertType\", alertType);",
+									"   console.log(alertType);",
+									"",
+									"})",
+									"",
+									"pm.test(\"alertStatus\", function(){ ",
+									"    let type = responseJson.items[0].alertStatus",
+									"    let alertStatus = type.toLowerCase();",
+									"   pm.environment.set(\"alertStatus\", alertStatus);",
+									"   console.log(alertStatus);",
+									"})",
+									"",
+									"pm.test(\"deviceKey\", function(){ ",
+									"   pm.environment.set(\"alertId\",responseJson.items[0].deviceKey);",
+									"})",
+									"",
+									"pm.test(\"triggerTime\", function(){ ",
+									"   pm.environment.set(\"triggerTime\",JSON.stringify(responseJson.items[0].triggerTime));",
+									"  ",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{EDP_Auth}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{edp-api}}/v1/site/{{AlertSite}}/alert/active",
+							"host": [
+								"{{edp-api}}"
+							],
+							"path": [
+								"v1",
+								"site",
+								"{{AlertSite}}",
+								"alert",
+								"active"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Alerts",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"let responseJson = pm.response.json();",
+									"",
+									"pm.test(\"Verify success response fields\", function(){ ",
+									"    console.log(\"OK\", pm.response.status);",
+									"})",
+									"",
+									"pm.test(\"Response\", function(){        ",
+									"    console.log(responseJson);",
+									"})",
+									"",
+									"pm.test(\"Validate if the alertId matches with EDP\", function(){        ",
+									"    pm.expect(responseJson.data.site.alerts[0].alertId).is.eql(environment.alertId1);",
+									"})",
+									"",
+									"pm.test(\"Validate if the eventTimestamp matches with EDP\", function(){        ",
+									"    pm.expect(JSON.stringify(responseJson.data.site.alerts[0].eventTimestamp)).is.eql(environment.triggerTime);",
+									"})",
+									"",
+									"pm.test(\"Validate if the deviceSerialNumber matches with EDP\", function(){        ",
+									"    pm.expect(responseJson.data.site.alerts[0].deviceSerialNumber).is.eql(environment.deviceSerialNumber);",
+									"})",
+									"",
+									"/*pm.test(\"Validate if the alertType matches with EDP\", function(){ ",
+									"    let type = responseJson.data.site.alerts[0].alertType",
+									"    let alertType = type.toLowerCase();",
+									"   pm.environment.set(\"alertType\", alertType);",
+									"   console.log(alertType);",
+									"    pm.expect(alertType).is.eql(environment.alertType);",
+									"})*/",
+									"",
+									"pm.test(\"Validate if the alertStatus matches with EDP\", function(){ ",
+									"    let type = responseJson.data.site.alerts[0].alertStatus",
+									"    let alertStatus = type.toLowerCase();",
+									"   pm.environment.set(\"alertStatus\", alertStatus);",
+									"   console.log(alertStatus);",
+									"    pm.expect(alertStatus).is.eql(environment.alertStatus);",
+									"})",
+									"",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{Auth}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "graphql",
+							"graphql": {
+								"query": "query Alerts($siteKey: String!) {\n  site(siteKey: $siteKey) {\n    alerts {\n      alertId\n      alertStatus\n      alertType\n      eventTimestamp\n      deviceKey\n      deviceSerialNumber\n      deviceType\n    }\n  }\n}",
+								"variables": "{\n  \"siteKey\": \"{{AlertSite}}\"\n}\n"
+							}
+						},
+						"url": {
+							"raw": "{{graphql}}/graphql",
+							"host": [
+								"{{graphql}}"
+							],
+							"path": [
+								"graphql"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "EDP_Sites",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"let responseJson = pm.response.json();",
+									"",
+									"pm.test(\"siteName\", function(){ ",
+									"   pm.environment.set(\"siteName\",responseJson.siteName);",
+									"})",
+									"",
+									"pm.test(\"latitude\", function(){ ",
+									"   pm.environment.set(\"latitude\",JSON.stringify(responseJson.latitude));",
+									"})",
+									"",
+									"pm.test(\"isNightvisionEnabled\", function(){ ",
+									"   pm.environment.set(\"isNightvisionEnabled\",responseJson.isNightvisionEnabled);",
+									"})",
+									"",
+									"pm.test(\"siteAssignmentType\", function(){ ",
+									"   pm.environment.set(\"siteAssignmentType\",responseJson.siteAssignmentType);",
+									"})",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{EDP_Auth}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{edp-api}}/v1/site/{{BatterySite}}",
+							"host": [
+								"{{edp-api}}"
+							],
+							"path": [
+								"v1",
+								"site",
+								"{{BatterySite}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Site_Call",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"let responseJson = pm.response.json();",
+									"",
+									"pm.test(\"Verify success response field\", function(){ ",
+									"    console.log(\"OK\", pm.response.status);   ",
+									"})",
+									"",
+									"pm.test(\"Response\", function(){        ",
+									"    console.log(responseJson);",
+									"})",
+									"",
+									"pm.test(\"Validate if the siteName matches with EDP\", function(){        ",
+									"    pm.expect(responseJson.data.site.siteName).is.eql(environment.siteName);",
+									"})",
+									"",
+									"pm.test(\"Validate if the siteType matches with EDP\", function(){        ",
+									"    pm.expect(responseJson.data.site.siteType).is.eql(environment.siteAssignmentType);",
+									"})",
+									"",
+									"pm.test(\"Validate if the latitude matches with EDP\", function(){        ",
+									"    pm.expect(JSON.stringify(responseJson.data.site.latitude)).is.eql(environment.latitude);",
+									"})",
+									"",
+									"pm.test(\"Validate if the isNightvisionEnabled matches with EDP\", function(){        ",
+									"    pm.expect(responseJson.data.site.isNightvisionEnabled).is.eql(environment.isNightvisionEnabled);",
+									"})",
+									"",
+									"pm.test(\"Validate if the hasMI is True\", function(){        ",
+									"    pm.expect(responseJson.data.site.hasMI).is.true;",
+									"})",
+									"",
+									"pm.test(\"Validate if the hasPanelLayout is True\", function(){        ",
+									"    pm.expect(responseJson.data.site.hasPanelLayout).is.true;",
+									"})",
+									"",
+									"pm.test(\"Validate if the hasLivedata is True \", function(){        ",
+									"    pm.expect(responseJson.data.site.hasLivedata).is.true;",
+									"})",
+									"",
+									"",
+									"",
+									"",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{Auth}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "graphql",
+							"graphql": {
+								"query": "query Site($siteKey: String!) {\n  site(siteKey: $siteKey) {\n    hasValidProductionMeter\n    hasWifi\n    isEnabledInNightvision\n    isLegacyPvs\n    hasPanelsCheck\n    isNightvisionEnabled\n    isPanelsEnabledInNightvision\n    isSiteNightvisionEnabled\n    latitude\n    originalAssignmentEffectiveTimestamp\n    parties {\n      partyId\n      relation\n      displayName\n      partyType\n      isContract\n      phone\n      email\n      preferredContactMethod\n    }\n    postalCode\n    siteName\n    siteType\n    state\n    address1\n    dealers {\n      partyId\n      displayName\n      email\n      phone\n    }\n    hasMI\n    hasPanelLayout\n    hasLivedata\n  }}",
+								"variables": "{\n  \"siteKey\": \"{{BatterySite}}\"\n}\n"
+							}
+						},
+						"url": {
+							"raw": "{{graphql}}/graphql",
+							"host": [
+								"{{graphql}}"
+							],
+							"path": [
+								"graphql"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "EDP_Party",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"let responseJson = pm.response.json();",
+									"",
+									"pm.test(\"partyId\", function(){ ",
+									"   pm.environment.set(\"partyId\",responseJson.partyId);",
+									"})",
+									"",
+									"pm.test(\"displayName\", function(){ ",
+									"  pm.environment.set(\"displayName\",responseJson.displayName);",
+									"})",
+									"",
+									"pm.test(\"Email\", function(){ ",
+									"   pm.environment.set(\"Email\",JSON.stringify(responseJson.email));",
+									"})",
+									"",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{EDP_Auth}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{edp-api}}/v1/party/{{partyId}}",
+							"host": [
+								"{{edp-api}}"
+							],
+							"path": [
+								"v1",
+								"party",
+								"{{partyId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Party_Call",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"let responseJson = pm.response.json();",
+									"",
+									"pm.test(\"Verify success response fields\", function(){ ",
+									"    console.log(\"OK\", pm.response.status);       ",
+									"})",
+									"",
+									"pm.test(\"Response\", function(){        ",
+									"    console.log(responseJson);",
+									"})",
+									"",
+									"pm.test(\"Validate if the partyId matches with EDP\", function(){        ",
+									"    pm.expect(responseJson.data.party.partyId).is.eql(environment.partyId);",
+									"})",
+									"",
+									"pm.test(\"Validate if the displayName matches with EDP\", function(){        ",
+									"    pm.expect(responseJson.data.party.displayName).is.eql(environment.displayName);",
+									"})",
+									"",
+									"pm.test(\"Validate if the Email matches with EDP\", function(){        ",
+									"    pm.expect(JSON.stringify(responseJson.data.party.email)).is.eql(environment.Email);",
+									"})",
+									"",
+									"/*pm.test(\"Validate if the Phone matches with EDP\", function(){        ",
+									"    pm.expect(JSON.stringify(responseJson.data.party.Phone)).is.eql(environment.Phone);",
+									"})*/",
+									"pm.test(\"Starttime and EndTime \", function(){",
+									"    const today = new Date();",
+									"const yesterday = new Date(today);",
+									"yesterday.setDate(today.getDate() - 1);",
+									"const yesterdayIsoString = yesterday.toISOString().split('T')[0];",
+									"const yesterdayStart = yesterdayIsoString + 'T00:00:00.000Z';",
+									"const yesterdayEnd = yesterdayIsoString + 'T11:59:59.999Z';",
+									"pm.environment.set(\"Starttime\",yesterdayStart.split('.')[0]);",
+									"pm.environment.set(\"Endtime\",yesterdayEnd.split('.')[0]);",
+									"})",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{Auth}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "graphql",
+							"graphql": {
+								"query": "query FetchPartyData($partyId: String!) {\n    party(partyId: $partyId) {\n        partyId\n        displayName\n        email\n        phone\n        sites {\n            siteKey\n            hasWifi\n            hasLivedata\n            siteName\n            siteType\n            address1\n            city\n            state\n            postalCode\n            systemSize\n            currentWeather {\n                sunrise\n                sunset\n                timezone\n                dateTime\n            }\n            battery {\n                operationMode\n                socAndChargeCapacity {\n                    stateOfChargePercentage\n                }\n            }\n            assignments(assignmentType: COMMISSION) {\n                deviceSerialNumber\n                deviceType\n                deviceKey\n                assignmentEffectiveTimestamp\n            }\n        }\n    }\n}",
+								"variables": "{\n  \"partyId\": \"{{partyId}}\"\n}"
+							}
+						},
+						"url": {
+							"raw": "{{graphql}}/graphql",
+							"host": [
+								"{{graphql}}"
+							],
+							"path": [
+								"graphql"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "EDP_Energy",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Starttime and EndTime \", function(){",
+									"    const today = new Date();",
+									"const yesterday = new Date(today);",
+									"yesterday.setDate(today.getDate() - 1);",
+									"const yesterdayIsoString = yesterday.toISOString().split('T')[0];",
+									"const yesterdayStart = yesterdayIsoString + 'T00:00:00.000Z';",
+									"const yesterdayEnd = yesterdayIsoString + 'T11:59:59.999Z';",
+									"pm.environment.set(\"Starttime\",yesterdayStart.split('.')[0]);",
+									"pm.environment.set(\"Endtime\",yesterdayEnd.split('.')[0]);",
+									"})",
+									"",
+									"let responseJson = pm.response.json();",
+									"",
+									"pm.test(\"timestamp\", function(){ ",
+									"   pm.environment.set(\"timestamp\",JSON.stringify(responseJson.items[1].timestamp));",
+									"})",
+									"",
+									"pm.test(\"energyProduction\", function(){ ",
+									"   pm.environment.set(\"energyProduction\",JSON.stringify(responseJson.items[1].energyProduction));",
+									"})",
+									"pm.test(\"energyConsumption\", function(){ ",
+									"   pm.environment.set(\"energyConsumption\",JSON.stringify(responseJson.items[1].energyConsumption));",
+									"})",
+									"pm.test(\"energyStorage\", function(){ ",
+									"   pm.environment.set(\"energyStorage\",JSON.stringify(responseJson.items[1].energyStorage));",
+									"})",
+									"pm.test(\"energyGrid\", function(){ ",
+									"   pm.environment.set(\"energyGrid\",JSON.stringify(responseJson.items[1].energyGrid));",
+									"})",
+									"",
+									"",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{EDP_Auth}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{edp-api}}/v2/site/{{Site}}/energy?dataType=aggregate&startDate={{Starttime}}Z&endDate={{Endtime}}Z&interval=DAY",
+							"host": [
+								"{{edp-api}}"
+							],
+							"path": [
+								"v2",
+								"site",
+								"{{Site}}",
+								"energy"
+							],
+							"query": [
+								{
+									"key": "dataType",
+									"value": "aggregate"
+								},
+								{
+									"key": "startDate",
+									"value": "{{Starttime}}Z"
+								},
+								{
+									"key": "endDate",
+									"value": "{{Endtime}}Z"
+								},
+								{
+									"key": "interval",
+									"value": "DAY"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Energy_Query",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Starttime and EndTime \", function(){",
+									"    const today = new Date();",
+									"const yesterday = new Date(today);",
+									"yesterday.setDate(today.getDate() - 1);",
+									"const yesterdayIsoString = yesterday.toISOString().split('T')[0];",
+									"const yesterdayStart = yesterdayIsoString + 'T00:00:00.000Z';",
+									"const yesterdayEnd = yesterdayIsoString + 'T23:59:59.999Z';",
+									"pm.environment.set(\"Starttime\",yesterdayStart.split('.')[0]);",
+									"pm.environment.set(\"Endtime\",yesterdayEnd.split('.')[0]);",
+									"})",
+									"",
+									"let responseJson = pm.response.json();",
+									"",
+									"pm.test(\"Response\", function(){        ",
+									"    console.log(responseJson);",
+									"})",
+									"",
+									"pm.test(\"Validate if the production data matches with EDP\", function(){        ",
+									"    pm.expect(JSON.stringify(responseJson.data.energyRange.energyDataSeries.production[0][1])).is.eql(JSON.stringify(environment.energyProduction));",
+									"})",
+									"",
+									"pm.test(\"Validate if the consumption data matches with EDP\", function(){        ",
+									"    pm.expect(JSON.stringify(responseJson.data.energyRange.energyDataSeries.consumption[0][1])).is.eql(JSON.stringify(environment.energyConsumption));",
+									"})",
+									"",
+									"pm.test(\"Validate if the storage data matches with EDP\", function(){        ",
+									"    pm.expect(JSON.stringify(responseJson.data.energyRange.energyDataSeries.storage[0][1])).is.eql(JSON.stringify(environment.energyStorage));",
+									"})",
+									"",
+									"pm.test(\"Validate if the grid data matches with EDP\", function(){        ",
+									"    pm.expect(JSON.stringify(responseJson.data.energyRange.energyDataSeries.grid[0][1])).is.eql(JSON.stringify(environment.energyGrid));",
+									"})",
+									"",
+									"",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{Auth}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "graphql",
+							"graphql": {
+								"query": "query EnergyRange($interval: String!, $end: String!, $start: String!, $siteKey: String!) {\n  energyRange(interval: $interval, end: $end, start: $start, siteKey: $siteKey) {\n    siteKey\n    startdate\n    enddate\n    interval\n    energyDataSeries {\n      production\n      consumption\n      storage\n      grid\n    }\n    totalProduction\n    totalConsumption\n    totalGridImport\n    totalGridExport\n    netGridImportExport\n    totalStorageCharged\n    totalStorageDischarged\n    netStorageChargedDischarged\n    energyMixPercentage\n    environmentalSavings {\n      costSaving {\n        value\n        unit\n      }\n      co2 {\n        value\n        unit\n      }\n      tree {\n        value\n        unit\n      }\n      mile {\n        value\n        unit\n      }\n      gas {\n        value\n        unit\n      }\n    }\n    weather {\n      timezone\n      tzoffset\n      days {\n        datetime\n        datetimeEpoch\n        maxTemperature\n        minTemperature\n        temperature\n        maxFeelsLikeTemperature\n        minFeelsLikeTemperature\n        feelsLikeTemperature\n        sunrise\n        sunriseEpoch\n        sunset\n        sunsetEpoch\n        moonphase\n        conditions\n        hours {\n          datetime\n          datetimeEpoch\n          temperature\n          feelsLikeTemperature\n          conditions\n        }\n      }\n    }\n    tooltipProductionTotals {\n      total\n      dateString\n    }\n    tooltipConsumptionTotals {\n      total\n      dateString\n    }\n    tooltipGridTotals {\n      total\n      dateString\n    }\n    tooltipStorageTotals {\n      total\n      dateString\n    }\n  }\n}",
+								"variables": "{\n    \"siteKey\": \"{{Site}}\",\n    \"start\": \"{{Starttime}}\",\n    \"end\": \"{{Endtime}}\",\n    \"interval\": \"day\"\n}"
+							}
+						},
+						"url": {
+							"raw": "{{graphql}}/graphql",
+							"host": [
+								"{{graphql}}"
+							],
+							"path": [
+								"graphql"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "EDP_Power",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Starttime and EndTime ', function () {",
+									"    const today = new Date();",
+									"    const yesterday = new Date(today);",
+									"    yesterday.setDate(today.getDate() - 1);",
+									"    const yesterdayIsoString = yesterday.toISOString().split('T')[0];",
+									"    const yesterdayStart = yesterdayIsoString + 'T00:00:00.000Z';",
+									"    const yesterdayEnd = yesterdayIsoString + 'T11:59:59.999Z';",
+									"    pm.environment.set('Starttime', yesterdayStart.split('.')[0]);",
+									"    pm.environment.set('Endtime', yesterdayEnd.split('.')[0]);",
+									"})",
+									"",
+									"let responseJson = pm.response.json();",
+									"",
+									"pm.test('timestamp', function () {",
+									"    pm.environment.set('timestamp', JSON.stringify(responseJson.items[1].timestamp));",
+									"})",
+									"",
+									"pm.test(\"acPowerProductionAverage\", function(){ ",
+									"   pm.environment.set(\"acPowerProductionAverage\",JSON.stringify(responseJson.items[1].acPowerProductionAverage));",
+									"})",
+									"",
+									"pm.test('acPowerProductionMax', function () {",
+									"    pm.environment.set('acPowerProductionMax', JSON.stringify(responseJson.items[1].acPowerProductionMax));",
+									"})",
+									"",
+									"pm.test('acPowerConsumptionAverage', function () {",
+									"    pm.environment.set('acPowerConsumptionAverage', JSON.stringify(responseJson.items[1].acPowerConsumptionAverage));",
+									"})",
+									"",
+									"pm.test('acPowerConsumptionMax', function () {",
+									"    pm.environment.set('acPowerConsumptionMax', JSON.stringify(responseJson.items[1].acPowerConsumptionMax));",
+									"})",
+									"",
+									"pm.test('acPowerStorageAverage', function () {",
+									"    pm.environment.set('acPowerStorageAverage', JSON.stringify(responseJson.items[1].acPowerStorageAverage));",
+									"})",
+									"",
+									"pm.test('acPowerStorageMax', function () {",
+									"    pm.environment.set('acPowerStorageMax', JSON.stringify(responseJson.items[1].acPowerStorageMax));",
+									"})",
+									"",
+									"pm.test('acPowerGridAverage', function () {",
+									"    pm.environment.set('acPowerGridAverage', JSON.stringify(responseJson.items[1].acPowerGridAverage));",
+									"})",
+									"",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{EDP_Auth}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{edp-api}}/v2/site/{{Site}}/power?startDate={{Starttime}}Z&endDate={{Endtime}}Z&interval=DAY",
+							"host": [
+								"{{edp-api}}"
+							],
+							"path": [
+								"v2",
+								"site",
+								"{{Site}}",
+								"power"
+							],
+							"query": [
+								{
+									"key": "startDate",
+									"value": "{{Starttime}}Z"
+								},
+								{
+									"key": "endDate",
+									"value": "{{Endtime}}Z"
+								},
+								{
+									"key": "interval",
+									"value": "DAY"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Power_Query",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Starttime and EndTime \", function(){",
+									"    const today = new Date();",
+									"const yesterday = new Date(today);",
+									"yesterday.setDate(today.getDate() - 1);",
+									"const yesterdayIsoString = yesterday.toISOString().split('T')[0];",
+									"const yesterdayStart = yesterdayIsoString + 'T00:00:00.000Z';",
+									"const yesterdayEnd = yesterdayIsoString + 'T23:59:59.999Z';",
+									"pm.environment.set(\"Starttime\",yesterdayStart.split('.')[0]);",
+									"pm.environment.set(\"Endtime\",yesterdayEnd.split('.')[0]);",
+									"})",
+									"",
+									"let responseJson = pm.response.json();",
+									"",
+									"pm.test(\"Response\", function(){        ",
+									"    console.log(responseJson);",
+									"})",
+									"",
+									"pm.test(\"Validate if the production data matches with EDP\", function(){        ",
+									"    pm.expect(JSON.stringify(responseJson.data.site.power.powerDataSeries.production[0][1])).is.eql(JSON.stringify(environment.acPowerProductionAverage));",
+									"})",
+									"",
+									"/*pm.test(\"Validate if the consumption data matches with EDP\", function(){        ",
+									"    pm.expect(JSON.stringify(responseJson.data.site.power.powerDataSeries.consumption[0][1])).is.eql(JSON.stringify(environment.acPowerConsumptionAverage));",
+									"}) */",
+									"",
+									"pm.test(\"Validate if the storage data matches with EDP\", function(){        ",
+									"    pm.expect(JSON.stringify(responseJson.data.site.power.powerDataSeries.storage[0][1])).is.eqls(JSON.stringify(environment.acPowerStorageAverage));",
+									"})",
+									"",
+									"/*pm.test(\"Validate if the grid data matches with EDP\", function(){        ",
+									"    pm.expect(JSON.stringify(responseJson.data.site.power.powerDataSeries.grid[0][1])).is.eql(JSON.stringify(environment.acPowerGridAverage));",
+									"}) */",
+									"",
+									"",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{Auth}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "graphql",
+							"graphql": {
+								"query": "query PowerDataSeries($interval: String!, $end: String!, $start: String!, $siteKey: String!) {\n  site(siteKey: $siteKey) {\n    power(interval: $interval, end: $end, start: $start) {\n      powerDataSeries {\n        production\n        consumption\n        storage\n        grid\n      }\n    }\n  }\n}",
+								"variables": "{\n  \"siteKey\": \"{{Site}}\",\n  \"interval\": \"day\",\n  \"start\": \"{{Starttime}}\",\n  \"end\": \"{{Endtime}}\"\n}"
+							}
+						},
+						"url": {
+							"raw": "{{graphql}}/graphql",
+							"host": [
+								"{{graphql}}"
+							],
+							"path": [
+								"graphql"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Current_Power_Query",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"let responseJson = pm.response.json();",
+									"",
+									"pm.test(\"Status code is 200\", function(){",
+									"    pm.response.status",
+									"})",
+									"",
+									"pm.test(\"Response\", function(){        ",
+									"    console.log(responseJson);",
+									"})",
+									"",
+									"pm.test(\"Validate if the production data is not Null\", function(){        ",
+									"    pm.expect(JSON.stringify(responseJson.data.currentPower.production)).is.not.null;",
+									"})",
+									"",
+									"pm.test(\"Validate if the consumption data is not Null\", function(){        ",
+									"    pm.expect(JSON.stringify(responseJson.data.currentPower.consumption)).is.not.null;",
+									"})",
+									"",
+									"pm.test(\"Validate if the storage data is not Null\", function(){        ",
+									"    pm.expect(JSON.stringify(responseJson.data.currentPower.storage)).is.not.null;",
+									"})",
+									"",
+									"pm.test(\"Validate if the grid data is not Null\", function(){        ",
+									"    pm.expect(JSON.stringify(responseJson.data.currentPower.grid)).is.not.null;",
+									"})",
+									"",
+									"pm.test(\"timestamp\", function(){        ",
+									"    pm.expect(JSON.stringify(responseJson.data.currentPower.timestamp)).is.not.null;",
+									"})",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{Auth}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "graphql",
+							"graphql": {
+								"query": "query Site($siteKey: String!) {\n  currentPower(siteKey: $siteKey) {\n    production\n    consumption\n    storage\n    grid\n    timestamp\n  }\n}",
+								"variables": "{\n  \"siteKey\" : \"{{Site}}\"\n}"
+							}
+						},
+						"url": {
+							"raw": "{{graphql}}/graphql",
+							"host": [
+								"{{graphql}}"
+							],
+							"path": [
+								"graphql"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Panels",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Starttime and EndTime \", function(){",
+									"    const today = new Date();",
+									"const yesterday = new Date(today);",
+									"yesterday.setDate(today.getDate() - 1);",
+									"const yesterdayIsoString = yesterday.toISOString().split('T')[0];",
+									"const yesterdayStart = yesterdayIsoString + 'T00:00:00.000Z';",
+									"const yesterdayEnd = yesterdayIsoString + 'T11:59:59.999Z';",
+									"pm.environment.set(\"Starttime\",yesterdayStart.split('.')[0]);",
+									"pm.environment.set(\"Endtime\",yesterdayEnd.split('.')[0]);",
+									"})",
+									"",
+									"let responseJson = pm.response.json();",
+									"",
+									"pm.test(\"Status code is 200\", function(){",
+									"    pm.response.status",
+									"})",
+									"",
+									"pm.test(\"Response\", function(){        ",
+									"    console.log(responseJson);",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{Auth}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "graphql",
+							"graphql": {
+								"query": "query Panels($date: String!, $siteKey: String!) {\n  panels(date: $date, siteKey: $siteKey) {\n    panels {\n      alerts {\n        alertId\n        alertStatus\n        alertType\n        eventTimestamp\n        deviceKey\n        deviceSerialNumber\n        deviceType\n      }\n      dailyEnergyProduction\n      energyColorCode\n      lastCommunicationTimestamp\n      layout {\n        azimuth\n        orientation\n        rotation\n        xCoordinate\n        yCoordinate\n      }\n      peakPowerProduction {\n        timestamp\n        value\n      }\n      serialNumber\n      sevenDayAverage\n    }\n  }\n}",
+								"variables": "{ \n    \"date\": \"{{Starttime}}\",\n  \"siteKey\": \"{{BatterySite}}\"\n}"
+							}
+						},
+						"url": {
+							"raw": "{{graphql}}/graphql",
+							"host": [
+								"{{graphql}}"
+							],
+							"path": [
+								"graphql"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get_Cases",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"let responseJson = pm.response.json();",
+									"",
+									"pm.test(\"Verify success response fields\", function(){ ",
+									"    console.log(\"OK\", pm.response.status);     ",
+									"})",
+									"",
+									"pm.test(\"Case number is not null\", function(){        ",
+									"    pm.expect(JSON.stringify(responseJson.data.getCases[0].caseNumber)).is.not.null;",
+									"})",
+									"",
+									"pm.test(\"caseNumber\", function(){ ",
+									"   pm.environment.set(\"caseNumber\", responseJson.data.getCases[0].caseNumber);",
+									"})",
+									"",
+									"pm.test(\"subject is not empty\", function(){        ",
+									"    pm.expect(JSON.stringify(responseJson.data.getCases[0].subject)).is.not.empty;",
+									"})",
+									"",
+									"pm.test(\"description is not empty\", function(){        ",
+									"    pm.expect(JSON.stringify(responseJson.data.getCases[0].description)).is.not.empty;",
+									"})",
+									"",
+									"pm.test(\"category is not empty\", function(){        ",
+									"    pm.expect(JSON.stringify(responseJson.data.getCases[0].category)).is.not.empty;",
+									"})",
+									"",
+									"pm.test(\"status is not empty\", function(){        ",
+									"    pm.expect(JSON.stringify(responseJson.data.getCases[0].status)).is.not.empty;",
+									"})",
+									"",
+									"pm.test(\"createdDate is not null\", function(){        ",
+									"    pm.expect(JSON.stringify(responseJson.data.getCases[0].createdDate)).is.not.null;",
+									"})",
+									"",
+									"pm.test(\"lastModifiedDate is not null\", function(){        ",
+									"    pm.expect(JSON.stringify(responseJson.data.getCases[0].lastModifiedDate)).is.not.null;",
+									"})",
+									"",
+									"pm.test(\"statusColor is not null\", function(){        ",
+									"    pm.expect(JSON.stringify(responseJson.data.getCases[0].statusColor)).is.not.null;",
+									"})",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{Auth}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "graphql",
+							"graphql": {
+								"query": "query Query($params: getCustomerCasesInput!) {\n  getCases(params: $params) {\n    caseNumber\n    subject\n    description\n    category\n    status\n    createdDate\n    lastModifiedDate\n    statusColor\n  }\n}",
+								"variables": "{\n  \"params\": {\n    \"oktaId\": \"{{oktaId}}\",\n    \"emailId\": \"{{emailId}}\",\n    \"partyId\": \"{{partyIdcase}}\",\n    \"siteId\": \"{{siteIdcase}}\",\n    \"jwt\": \"{{JWT}}\"\n  }\n}"
+							}
+						},
+						"url": {
+							"raw": "{{graphql}}/graphql",
+							"host": [
+								"{{graphql}}"
+							],
+							"path": [
+								"graphql"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Add Comments",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"let responseJson = pm.response.json();",
+									"",
+									"pm.test(\"Verify success response fields\", function(){ ",
+									"    console.log(\"OK\", pm.response.status);     ",
+									"})",
+									"",
+									"pm.test(\"Case Comment added and Updated Case Status\", function(){        ",
+									"   pm.expect(responseJson.data.addCaseComment.status).is.eqls(200);",
+									"",
+									"})",
+									"",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{Auth}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "graphql",
+							"graphql": {
+								"query": "mutation AddCaseComment($params: addCaseCommentInput!) {\n  addCaseComment(params: $params) {\n    message\n    status\n  }\n}",
+								"variables": "{\n  \"params\": {\n    \"caseNumber\": \"{{caseNumber}}\",\n    \"jwt\": \"{{JWT}}\",\n    \"comment\": \"Add New Comment\"\n  }\n}"
+							}
+						},
+						"url": {
+							"raw": "{{graphql}}/graphql",
+							"host": [
+								"{{graphql}}"
+							],
+							"path": [
+								"graphql"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}
