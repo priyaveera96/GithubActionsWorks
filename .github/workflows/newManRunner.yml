@@ -28,12 +28,10 @@ jobs:
       - name: Install Dependencies
         run: |
           npm install -g newman
-      - name: Install Newman Reporter
-        run: |
-          npm install -g newman-reporter-htmlexra
+
 
       - name: Run Newman
         run: |
           bash 
-          newman run src/msp/GQL_BAT_Test_Case.postman_collection.json -e src/msp/Gql_QA_Bat_Environment.postman_environment.json -r htmlextra
+          newman run src/msp/GQL_BAT_Test_Case.postman_collection.json -e src/msp/Gql_QA_Bat_Environment.postman_environment.json
 
