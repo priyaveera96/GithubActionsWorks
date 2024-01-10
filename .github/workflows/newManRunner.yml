@@ -50,7 +50,7 @@ jobs:
           username: notificsunpower@gmail.com
           password: xhbexzslqdxniljz
           subject: Graphql Bat Status
-          html_body: file://newman/overview.html
+          html_body: file://newman/*.html
           content_type: text/html
           to: priyaveera96@gmail.com
           from: notificsunpower@gmail.com        
