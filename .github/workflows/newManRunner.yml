@@ -7,7 +7,7 @@ on:
           description: environment
           default: qa
 env:
- TEST_FILES: src/msp/GQL_BAT_Test_Case.postman_collection.json
+ TEST_FILES: src/msp/env/Gql_QA_Bat_Environment.postman_environment.json
  TEST_ENV_FILES_LOCATION: src/msp/env
  MSP_QA_GQL_USERNAME: ${{ secrets.MSP_QA_GQL_USERNAME }}
  MSP_QA_GQL_PASSWORD: ${{ secrets.MSP_QA_GQL_PASSWORD }}
