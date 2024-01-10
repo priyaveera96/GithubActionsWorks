@@ -42,6 +42,7 @@ jobs:
           newman run src/msp/GQL_BAT_Test_Case.postman_collection.json -e $TEST_ENV_FILES_LOCATION/test_env_file3.json -r htmlextra --reporter-htmlextra-export report.html
 
       - name: Send mail
+        if: failure()
         uses: dawidd6/action-send-mail@v3.9.0
         with:
           server_address: smtp.gmail.com
