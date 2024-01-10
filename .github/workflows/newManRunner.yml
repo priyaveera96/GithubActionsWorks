@@ -1,0 +1,40 @@
+name: MSP GraphQL BAT
+on:
+  workflow_dispatch:
+      inputs:
+        env:
+          required: false
+          description: environment
+          default: qa
+jobs:
+  newman-test:
+    runs-on: ubuntu-latest
+
+    env:
+      MSP_QA_GQL_USERNAME: ${{ secrets.MSP_QA_GQL_USERNAME }}
+      MSP_QA_GQL_PASSWORD: ${{ secrets.MSP_QA_GQL_PASSWORD }}
+      EDP_QA_API_USERNAME: ${{ secrets.EDP_QA_API_USERNAME }}
+      EDP_QA_API_PASSWORD: ${{ secrets.EDP_QA_API_PASSWORD }}
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+
+      - name: Install Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '14'
+
+      - name: Install Dependencies
+        run: |
+          npm install -g newman
+
+      - name: Run Newman
+        run: |
+          echo "MSP_QA_GQL_USERNAME: $MSP_QA_GQL_USERNAME"
+          echo "MSP_QA_GQL_PASSWORD: $MSP_QA_GQL_PASSWORD"
+          echo "EDP_QA_API_USERNAME: $EDP_QA_API_USERNAME"
+          echo "EDP_QA_API_PASSWORD: $EDP_QA_API_PASSWORD"
+          
+          test =$(newman run src/msp/GQL_BAT_Test_Case.postman_collection.json -e src/msp/Gql_QA_Bat_Environment.postman_environment.json)
+
