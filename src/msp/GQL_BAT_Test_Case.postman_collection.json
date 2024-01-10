@@ -580,14 +580,14 @@
 							"raw": ""
 						},
 						"url": {
-							"raw": "{{edp-api}}/v1/site/E_22127/storage/alerts?include-resolved=false",
+							"raw": "{{edp-api}}/v1/site/E_25490/storage/alerts?include-resolved=false",
 							"host": [
 								"{{edp-api}}"
 							],
 							"path": [
 								"v1",
 								"site",
-								"E_22127",
+								"E_25490",
 								"storage",
 								"alerts"
 							],
@@ -660,7 +660,7 @@
 							"mode": "graphql",
 							"graphql": {
 								"query": "query ServiceCodes($siteKey: String!) {\n  site(siteKey: $siteKey) {\n    serviceCodes {\n      alrtKey\n      prodMdlNm\n      comDvcSn\n      connDvcSn\n      dvcTy\n      alrtNm\n      alrtStFl\n      trgrdEps\n      rslvdEps\n    }\n  }\n}\n",
-								"variables": "{\n  \"siteKey\": \"E_22127\"\n}\n"
+								"variables": "{\n  \"siteKey\": \"E_25490\"\n}\n"
 							}
 						},
 						"url": {
