@@ -32,5 +32,5 @@ jobs:
       - name: Run Newman
         run: |
           bash 
-          newman run src/msp/GQL_BAT_Test_Case.postman_collection.json -e src/msp/Gql_QA_Bat_Environment.postman_environment.json) -r htmlextra
+          newman run src/msp/GQL_BAT_Test_Case.postman_collection.json -e src/msp/Gql_QA_Bat_Environment.postman_environment.json -r htmlextra
 
