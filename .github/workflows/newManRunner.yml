@@ -6,16 +6,16 @@ on:
           required: false
           description: environment
           default: qa
+env:
+ TEST_FILES: src/msp/GQL_BAT_Test_Case.postman_collection.json
+ TEST_ENV_FILES_LOCATION: src/msp
+ MSP_QA_GQL_USERNAME: ${{ secrets.MSP_QA_GQL_USERNAME }}
+ MSP_QA_GQL_PASSWORD: ${{ secrets.MSP_QA_GQL_PASSWORD }}
+ EDP_QA_API_USERNAME: ${{ secrets.EDP_QA_API_USERNAME }}
+ EDP_QA_API_PASSWORD: ${{ secrets.EDP_QA_API_PASSWORD }}
 jobs:
   newman-test:
     runs-on: ubuntu-latest
-
-    env:
-      MSP_QA_GQL_USERNAME: ${{ secrets.MSP_QA_GQL_USERNAME }}
-      MSP_QA_GQL_PASSWORD: ${{ secrets.MSP_QA_GQL_PASSWORD }}
-      EDP_QA_API_USERNAME: ${{ secrets.EDP_QA_API_USERNAME }}
-      EDP_QA_API_PASSWORD: ${{ secrets.EDP_QA_API_PASSWORD }}
-
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v2
@@ -32,6 +32,11 @@ jobs:
 
       - name: Run Newman
         run: |
+          jq --arg variable "$MSP_QA_GQL_USERNAME" '.values[3].value = $variable' ${TEST_FILES} > $TEST_ENV_FILES_LOCATION/test_env_file.json
+          jq --arg variable "$MSP_QA_GQL_PASSWORD" '.values[3].value = $variable' ${TEST_FILES} > $TEST_ENV_FILES_LOCATION/test_env_file1.json
+          jq --arg variable "$EDP_QA_API_USERNAME" '.values[3].value = $variable' ${TEST_FILES} > $TEST_ENV_FILES_LOCATION/test_env_file2.json
+          jq --arg variable "$EDP_QA_API_PASSWORD" '.values[3].value = $variable' ${TEST_FILES} > $TEST_ENV_FILES_LOCATION/test_env_file3.json
+
           bash 
-          newman run src/msp/GQL_BAT_Test_Case.postman_collection.json -e src/msp/Gql_QA_Bat_Environment.postman_environment.json
+          newman run src/msp/GQL_BAT_Test_Case.postman_collection.json -e test_env_file3.json
 
