@@ -33,9 +33,9 @@ jobs:
       - name: Run Newman
         run: |
           jq --arg variable "$MSP_QA_GQL_USERNAME" '.values[3].value = $variable' ${TEST_FILES} > $TEST_ENV_FILES_LOCATION/test_env_file.json
-          jq --arg variable "$MSP_QA_GQL_PASSWORD" '.values[4].value = $variable' ${TEST_FILES} > $TEST_ENV_FILES_LOCATION/test_env_file1.json
-          jq --arg variable "$EDP_QA_API_USERNAME" '.values[5].value = $variable' ${TEST_FILES} > $TEST_ENV_FILES_LOCATION/test_env_file2.json
-          jq --arg variable "$EDP_QA_API_PASSWORD" '.values[6].value = $variable' ${TEST_FILES} > $TEST_ENV_FILES_LOCATION/test_env_file3.json
+          jq --arg variable "$MSP_QA_GQL_PASSWORD" '.values[4].value = $variable' $TEST_ENV_FILES_LOCATION/test_env_file.json > $TEST_ENV_FILES_LOCATION/test_env_file1.json
+          jq --arg variable "$EDP_QA_API_USERNAME" '.values[5].value = $variable' $TEST_ENV_FILES_LOCATION/test_env_file1.json > $TEST_ENV_FILES_LOCATION/test_env_file2.json
+          jq --arg variable "$EDP_QA_API_PASSWORD" '.values[6].value = $variable' $TEST_ENV_FILES_LOCATION/test_env_file2.json > $TEST_ENV_FILES_LOCATION/test_env_file3.json
 
           bash 
           newman run src/msp/GQL_BAT_Test_Case.postman_collection.json -e $TEST_ENV_FILES_LOCATION/test_env_file3.json
