@@ -17,8 +17,11 @@ jobs:
   newman-test:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v2
+      - uses: actions/checkout@v2
+      - name: Create Directory
+        run : |
+          mkdir ReportOutput 
+
 
       - name: Install Node.js
         uses: actions/setup-node@v3
@@ -39,10 +42,9 @@ jobs:
           jq --arg variable "$EDP_QA_API_PASSWORD" '.values[6].value = $variable' $TEST_ENV_FILES_LOCATION/test_env_file2.json > $TEST_ENV_FILES_LOCATION/test_env_file3.json
 
           bash 
-          newman run src/msp/GQL_BAT_Test_Case.postman_collection.json -e $TEST_ENV_FILES_LOCATION/test_env_file3.json -r htmlextra
+          newman run src/msp/GQL_BAT_Test_Case.postman_collection.json -e $TEST_ENV_FILES_LOCATION/test_env_file3.json -r cli,htmlextra --reporter-htmlextra-export ReportOutput/htmlReport.html
 
       - name: Send mail
-        if: failure()
         uses: dawidd6/action-send-mail@v3.9.0
         with:
           server_address: smtp.gmail.com
@@ -50,7 +52,7 @@ jobs:
           username: notificsunpower@gmail.com
           password: xhbexzslqdxniljz
           subject: Graphql Bat Status
-          html_body: file://newman/*.html
+          html_body: file://ReportOutput/htmlReport.html
           content_type: text/html
           to: priyaveera96@gmail.com
           from: notificsunpower@gmail.com        
