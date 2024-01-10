@@ -39,7 +39,7 @@ jobs:
           jq --arg variable "$EDP_QA_API_PASSWORD" '.values[6].value = $variable' $TEST_ENV_FILES_LOCATION/test_env_file2.json > $TEST_ENV_FILES_LOCATION/test_env_file3.json
 
           bash 
-          newman run src/msp/GQL_BAT_Test_Case.postman_collection.json -e src/msp/env/test_env_file3.json -r htmlextra --reporter-htmlextra-export report.html
+          newman run src/msp/GQL_BAT_Test_Case.postman_collection.json -e src/msp/env/test_env_file3.json -r htmlextra
 
       - name: Send mail
         if: failure()
@@ -50,7 +50,7 @@ jobs:
           username: notificsunpower@gmail.com
           password: xhbexzslqdxniljz
           subject: Graphql Bat Status
-          html_body: file://report.html
+          html_body: file://src/msp/newman/overview.html
           content_type: text/html
           to: priyaveera96@gmail.com
           from: notificsunpower@gmail.com        
