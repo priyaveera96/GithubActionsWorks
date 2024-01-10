@@ -38,5 +38,5 @@ jobs:
           jq --arg variable "$EDP_QA_API_PASSWORD" '.values[3].value = $variable' ${TEST_FILES} > $TEST_ENV_FILES_LOCATION/test_env_file3.json
 
           bash 
-          newman run src/msp/GQL_BAT_Test_Case.postman_collection.json -e test_env_file3.json
+          newman run src/msp/GQL_BAT_Test_Case.postman_collection.json -e $TEST_ENV_FILES_LOCATION/test_env_file3.json
 
