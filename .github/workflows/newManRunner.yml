@@ -31,7 +31,7 @@ jobs:
         with:
           collection: $RUNNER_FILES/GQL_BAT_Test_Case.postman_collection.json
           environment: $TEST_FILES
-          reporter: "cli"
+          reporters: "cli"
 
       - name: Output summary to console
         run: echo "${{ steps.run-newman.outputs.summary_full }}"
