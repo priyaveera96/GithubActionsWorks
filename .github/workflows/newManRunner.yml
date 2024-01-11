@@ -27,7 +27,7 @@ jobs:
 
       - name: Run API Tests
         id: run-newman
-        uses: anthonyvscode/newman-action@v1
+        uses: SimonScholz/postman-newman-action@main
         with:
           collection: $RUNNER_FILES/GQL_BAT_Test_Case.postman_collection.json
           environment: $TEST_FILES
