@@ -7,21 +7,13 @@ on:
           description: environment
           default: qa
 env:
- TEST_FILES: src/msp/env/Gql_QA_Bat_Environment.postman_environment.json
- TEST_ENV_FILES_LOCATION: src/msp/env
- MSP_QA_GQL_USERNAME: ${{ secrets.MSP_QA_GQL_USERNAME }}
- MSP_QA_GQL_PASSWORD: ${{ secrets.MSP_QA_GQL_PASSWORD }}
- EDP_QA_API_USERNAME: ${{ secrets.EDP_QA_API_USERNAME }}
- EDP_QA_API_PASSWORD: ${{ secrets.EDP_QA_API_PASSWORD }}
+ TEST_FILES: $PWD/src/msp/env/Gql_QA_Bat_Environment.postman_environment.json
+ RUNNER_FILES: $PWD/src/msp
 jobs:
   newman-test:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - name: Create Directory
-        run : |
-          mkdir ReportOutput 
-
 
       - name: Install Node.js
         uses: actions/setup-node@v3
@@ -33,16 +25,16 @@ jobs:
           npm install -g newman
           npm install -g newman-reporter-htmlextra
 
+      - name: Run API Tests
+        id: run-newman
+        uses: anthonyvscode/newman-action@v1
+        with:
+          collection: $RUNNER_FILES/GQL_BAT_Test_Case.postman_collection.json
+          environment: $TEST_FILES
+          reporters: cli
 
-      - name: Run Newman
-        run: |
-          jq --arg variable "$MSP_QA_GQL_USERNAME" '.values[3].value = $variable' ${TEST_FILES} > $TEST_ENV_FILES_LOCATION/test_env_file.json
-          jq --arg variable "$MSP_QA_GQL_PASSWORD" '.values[4].value = $variable' $TEST_ENV_FILES_LOCATION/test_env_file.json > $TEST_ENV_FILES_LOCATION/test_env_file1.json
-          jq --arg variable "$EDP_QA_API_USERNAME" '.values[5].value = $variable' $TEST_ENV_FILES_LOCATION/test_env_file1.json > $TEST_ENV_FILES_LOCATION/test_env_file2.json
-          jq --arg variable "$EDP_QA_API_PASSWORD" '.values[6].value = $variable' $TEST_ENV_FILES_LOCATION/test_env_file2.json > $TEST_ENV_FILES_LOCATION/test_env_file3.json
-
-          bash 
-          newman run src/msp/GQL_BAT_Test_Case.postman_collection.json -e $TEST_ENV_FILES_LOCATION/test_env_file3.json -r cli,htmlextra --reporter-htmlextra-export ReportOutput/htmlReport.html
+      - name: Output summary to console
+        run: echo ${{ steps.run-newman.outputs.summary }}
 
       - name: Send mail
         uses: dawidd6/action-send-mail@v3.9.0
@@ -52,7 +44,7 @@ jobs:
           username: notificsunpower@gmail.com
           password: xhbexzslqdxniljz
           subject: Graphql Bat Status
-          html_body: file://ReportOutput/htmlReport.html
+          body: ${{ steps.run-newman.outputs.summary }}
           content_type: text/html
           to: priyaveera96@gmail.com
           from: notificsunpower@gmail.com        
