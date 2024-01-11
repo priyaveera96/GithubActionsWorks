@@ -31,10 +31,10 @@ jobs:
         with:
           collection: $RUNNER_FILES/GQL_BAT_Test_Case.postman_collection.json
           environment: $TEST_FILES
-          reporters: cli
+          reporter: "cli"
 
       - name: Output summary to console
-        run: echo ${{ steps.run-newman.outputs.summary }}
+        run: echo "${{ steps.run-newman.outputs.summary_full }}"
 
       - name: Send mail
         uses: dawidd6/action-send-mail@v3.9.0
@@ -44,7 +44,7 @@ jobs:
           username: notificsunpower@gmail.com
           password: xhbexzslqdxniljz
           subject: Graphql Bat Status
-          body: ${{ steps.run-newman.outputs.summary }}
+          html_body: ${{ steps.run-newman.outputs.summary }}
           content_type: text/html
           to: priyaveera96@gmail.com
           from: notificsunpower@gmail.com        
