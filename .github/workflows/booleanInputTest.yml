@@ -16,7 +16,7 @@ jobs:
        - name: android print statement       
          run: | 
            if [ "${{matrix.test}}" == "name3" ]; then
-             lambda = true
+             lambda = "true"
            fi  
            echo "testname: ${{matrix.test}} + lambda : $lambda"
 
