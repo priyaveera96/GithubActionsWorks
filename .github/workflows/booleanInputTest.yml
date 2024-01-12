@@ -18,12 +18,12 @@ jobs:
     steps:
        - name: android print statement       
          run: | 
-           if [ "${{matrix.test}}" == "name3"]; then
+           if [ "${{matrix.test}}" == "name3" ]; then
              echo "testname: ${{matrix.test}} + lambda : true"
            else
              echo "testname: ${{matrix.test}} + lambda : false"
            fi  
-           echo "testname: ${{matrix.test}} + lambda : after if else"
+           echo "testname: ${{matrix.test}} +  after if else"
 
 
   
