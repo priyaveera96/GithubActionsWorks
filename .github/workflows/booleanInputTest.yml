@@ -10,15 +10,11 @@ on:
 
 jobs:
   test:
-    runs-on: qa-runner
+    runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
         test: [name1, name2, name3]
-        lambda: [false]
-        exclude:
-           - test: "name3"
-             lambda: false
     steps:
        - name: android print statement       
          run: | 
