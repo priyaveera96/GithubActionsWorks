@@ -17,8 +17,9 @@ jobs:
          run: | 
            if [ "${{matrix.test}}" == "name3" ]; then
              lambda = true
-             echo "testname: ${{matrix.test}} + lambda : $lambda"
            fi  
+           echo "testname: ${{matrix.test}} + lambda : $lambda"
+
 
 
   
