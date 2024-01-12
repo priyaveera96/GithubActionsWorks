@@ -1,0 +1,28 @@
+name: Boolean Test
+on: 
+  workflow_dispatch:
+      inputs:
+        lambda:
+          required: false
+          type: boolean
+          description: environment
+          default: false
+
+jobs:
+  test:
+    runs-on: qa-runner
+    strategy:
+      fail-fast: false
+      matrix:
+        test: [name1, name2, name3]
+        lambda: [false]
+        exclude:
+           - test: "name3"
+             lambda: false
+    steps:
+       - name: android print statement       
+         run: | 
+           echo "testname: ${{matrix.test}}"
+           echo "lambda: ${{matrix.lambda}}"
+
+  
