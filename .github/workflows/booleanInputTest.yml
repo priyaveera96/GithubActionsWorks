@@ -15,9 +15,9 @@ jobs:
          run: | 
            if [ "${{matrix.test}}" == "name3" ]; then
              echo "lambda=true" >> $GITHUB_ENV
-             echo "testname: ${{matrix.test}} + lambda : ${{env.lambda}}"
+             echo "testname: ${{matrix.test}} + lambda : $lambda"
            fi  
-           echo "testname: ${{matrix.test}} + lambda : ${{env.lambda}}"
+           echo "testname: ${{matrix.test}} + lambda : $lambda"
 
 
 
