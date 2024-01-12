@@ -11,10 +11,11 @@ jobs:
       matrix:
         test: [name1, name2, name3]
     steps:
+       - uses: actions/checkout@v3
        - name: android print statement       
          run: | 
            if [ "${{matrix.test}}" == "name3" ]; then
-             echo "lambda=true" >> $GITHUB_ENV
+             echo "lambda=true" >> "$GITHUB_ENV"
              echo "testname: ${{matrix.test}} + lambda : $lambda"
            fi  
            echo "testname: ${{matrix.test}} + lambda : $lambda"
