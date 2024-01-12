@@ -1,7 +1,8 @@
 name: Boolean Test
 on: 
   workflow_dispatch:
-
+env:
+ lambda: "false"
  
 jobs:
   test:
@@ -15,9 +16,9 @@ jobs:
        - name: android print statement       
          run: | 
            if [ "${{matrix.test}}" == "name3" ]; then
-             echo "lambda=true" >> $GITHUB_ENV
+              lambda=$(echo "true")
            fi  
-           echo "testname: ${{matrix.test}} + lambda : ${{ env.lambda }}"
+           echo "testname: ${{matrix.test}} + lambda : $lambda"
 
 
 
