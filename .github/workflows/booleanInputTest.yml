@@ -1,13 +1,10 @@
 name: Boolean Test
 on: 
   workflow_dispatch:
-      inputs:
-        lambda:
-          required: false
-          type: boolean
-          description: environment
-          default: false
 
+env:
+ lambda: false
+ 
 jobs:
   test:
     runs-on: ubuntu-latest
@@ -18,12 +15,10 @@ jobs:
     steps:
        - name: android print statement       
          run: | 
-           if [ "${{matrix.test}}" == "name3" ] || [ "${{matrix.test}}" == "name2" ]; then
-             echo "testname: ${{matrix.test}} + lambda : true"
-           else
-             echo "testname: ${{matrix.test}} + lambda : false"
+           if [ "${{matrix.test}}" == "name3" ]; then
+             lambda = true
+             echo "testname: ${{matrix.test}} + lambda : $lambda"
            fi  
-           echo "testname: ${{matrix.test}} +  after if else"
 
 
   
