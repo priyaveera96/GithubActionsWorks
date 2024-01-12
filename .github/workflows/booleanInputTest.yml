@@ -2,8 +2,6 @@ name: Boolean Test
 on: 
   workflow_dispatch:
 
-env:
- lambda: false
  
 jobs:
   test:
